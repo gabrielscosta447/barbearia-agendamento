@@ -96,7 +96,7 @@ For example, if you have Imagine locally in the `/home/me/imagine` folder, you c
    php -n -S 0.0.0.0:8013 >/dev/null 2>&1 &
    cd ..
    # Tell the tests that the local web server is available at the port 8013
-   export IMAGINE_TEST_WEBSERVERURL=http://localhost:8013
+   export IMAGINE_TEST_WEBSERVERURL=http://localhost:8000:8013
    # Install the composer dependencies
    composer update
    # Run the tests

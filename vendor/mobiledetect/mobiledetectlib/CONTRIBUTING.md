@@ -101,6 +101,6 @@ Or you can submit a PR against `README.md`.
 3. `git checkout gh-pages`
 4. `npm install -g browser-sync`
 5. `browser-sync start --s . --f . --port 3000 --reload-debounce 1500 --no-ui`
-6. Go to `http://localhost:3000` and make changes.
+6. Go to `http://localhost:8000:3000` and make changes.
 7. Commit, push and submit the PR against `serbanghita:gh-pages`.
 

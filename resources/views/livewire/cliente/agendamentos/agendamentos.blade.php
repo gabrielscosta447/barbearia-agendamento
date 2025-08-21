@@ -36,7 +36,7 @@
     <a href="/{{ $agendamento->colaborador->barbearia->slug }}"    data-te-ripple-init
       data-te-ripple-color="light" wire:navigate class="relative m-0 overflow-hidden text-gray-700 bg-transparent rounded-none shadow-none bg-clip-border">
       <img
-        src="http://localhost/storage/{{ $agendamento->colaborador->barbearia->imagem }}"
+        src="http://localhost:8000/storage/{{ $agendamento->colaborador->barbearia->imagem }}"
         class="w-full h-[317px] object-cover"
         alt="ui/ux review check" />
     </a>

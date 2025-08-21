@@ -320,7 +320,7 @@ Several other fixes and improvements.
   doing some magic.
   - `(new Uri)->withPath('foo')->withHost('example.com')` will throw an exception
     because the path of a URI with an authority must start with a slash "/" or be empty
-  - `(new Uri())->withScheme('http')` will return `'http://localhost'`
+  - `(new Uri())->withScheme('http')` will return `'http://localhost:8000'`
 
 ### Deprecated
 

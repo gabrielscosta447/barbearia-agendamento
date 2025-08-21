@@ -11,7 +11,7 @@
 <body class="bg-gray-100 h-screen flex items-center justify-center">
     <div class="max-w-md w-full bg-white p-8 rounded shadow-lg flex flex-col items-center">
    
-        <img src="http://localhost/instagram.png" alt="Instagram Logo" class="w-24 mb-8">
+        <img src="http://localhost:8000/instagram.png" alt="Instagram Logo" class="w-24 mb-8">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-green-500 mb-4" fill="none" viewBox="0 0 24 24"
         stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

@@ -177,7 +177,7 @@ class IgnitionConfig implements Arrayable
                 ],
                 'phpstorm-remote' => [
                     'label' => 'PHPStorm Remote',
-                    'url' => 'javascript:r = new XMLHttpRequest;r.open("get", "http://localhost:63342/api/file/%path:%line");r.send()',
+                    'url' => 'javascript:r = new XMLHttpRequest;r.open("get", "http://localhost:8000:63342/api/file/%path:%line");r.send()',
                 ],
                 'idea' => [
                     'label' => 'Idea',

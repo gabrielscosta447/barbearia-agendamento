@@ -11,6 +11,6 @@ typesense:
     networks:
         - sail
     healthcheck:
-        test: ["CMD", "wget", "--no-verbose", "--spider",  "http://localhost:8108/health"]
+        test: ["CMD", "wget", "--no-verbose", "--spider",  "http://localhost:8000:8108/health"]
         retries: 5
         timeout: 7s

@@ -34,7 +34,7 @@ return [
     'google' => [
          'client_id' => env('GOOGLE_CLIENT_ID'),
          'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-         'redirect' => "http://localhost/auth/google/callback"
+         'redirect' => "http://localhost:8000/auth/google/callback"
     ],
     'paypal'=>[
          'id'=>env('PAYPAL_ID'),
