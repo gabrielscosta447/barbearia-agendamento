@@ -249,7 +249,7 @@ class AgendarBarbearia extends Component
        $token = $credential->fetchAuthToken(HttpHandlerFactory::build());
 
    try {
-         Http::withHeaders([
+      $usuario =    Http::withHeaders([
            'Content-Type' => 'application/json',
            'Authorization' => 'Bearer '. $token['access_token']
        ])->post('https://fcm.googleapis.com/v1/projects/barbearia-agendamento-7fe43/messages:send', [
@@ -258,15 +258,16 @@ class AgendarBarbearia extends Component
                "notification" => [
                    "title" => "Agendamento criado com sucesso.",
                    "body" => "Data: ". $agendamento->start_date->format('d/m/Y H:i'),
-                   "image" => "http://localhost/storage/" . $this->barbeiroSelecionado->barbearia->imagem
+                   "image" => "http://localhost:8000/storage/" . $this->barbeiroSelecionado->barbearia->imagem
                ],
                "webpush" => [
                    "fcm_options" => [
-                       "link" => "http://localhost/home?tab=pills-contact8"
+                       "link" => "http://localhost:8000/home?tab=pills-contact8"
                    ]
                ]
            ]
        ]);
+   
        Http::withHeaders([
         'Content-Type' => 'application/json',
         'Authorization' => 'Bearer '. $token['access_token']
@@ -276,11 +277,11 @@ class AgendarBarbearia extends Component
             "notification" => [
                 "title" => "Um novo agendamento foi criado para você.",
                 "body" => "Data: ". $agendamento->start_date->format('d/m/Y H:i'),
-                "image" => "http://localhost/storage/" . $this->barbeiroSelecionado->barbearia->imagem
+                "image" => "http://localhost:8000/storage/" . $this->barbeiroSelecionado->barbearia->imagem
             ],
             "webpush" => [
                 "fcm_options" => [
-                    "link" => "http://localhost/gerenciar/{$this->barbeiroSelecionado->barbearia->slug}/agendamentos"
+                    "link" => "http://localhost:8000/gerenciar/{$this->barbeiroSelecionado->barbearia->slug}/agendamentos"
                 ]
             ]
         ]
@@ -288,14 +289,6 @@ class AgendarBarbearia extends Component
     } catch(\Exception $e) {
         dd($e);
     }
-
-
-
-
-
-
-
-
 
  }
 

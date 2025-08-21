@@ -34,7 +34,7 @@ use Aws\Exception\UnresolvedEndpointException;
  *
  *     $a = function (array $args) {
  *         if ($args['region'] === 'my-test-region') {
- *             return ['endpoint' => 'http://localhost:123/api'];
+ *             return ['endpoint' => 'http://localhost:8000:123/api'];
  *         }
  *     };
  *     $b = EndpointProvider::defaultProvider();

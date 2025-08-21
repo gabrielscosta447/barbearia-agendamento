@@ -62,11 +62,11 @@ class NotificationJob implements ShouldQueue
                             "notification" => [
                                 "title" => "Falta uma Hora para o seu agendamento!",
                                 "body" => "Data: " . $start_date_formatted,
-                                "image" => "http://localhost/" . $agendamento->colaborador->barbearia->imagem
+                                "image" => "http://localhost:8000/" . $agendamento->colaborador->barbearia->imagem
                             ],
                             "webpush" => [
                                 "fcm_options" => [
-                                    "link" => "http://localhost/home?tab=pills-contact8"
+                                    "link" => "http://localhost:8000/home?tab=pills-contact8"
                                 ]
                             ]
                         ]

@@ -21,11 +21,11 @@ Note: The root directory for composer based download would be `vendor` and for d
     ```
     <!-- Welcome to PayPal REST SDK -- >
     PHP 5.5.14 Development Server started at Sat Jan 10 14:04:35 2015
-    Listening on http://localhost:5000
+    Listening on http://localhost:8000:5000
     Document root is /Users/japatel/Desktop/project/PayPal-PHP-SDK/paypal/rest-api-sdk-php/sample
     Press Ctrl-C to quit.
     ```
-3. Open [http://localhost:5000/](http://localhost:5000/) in your web browser, and you should be able to see the sample dashboard.
+3. Open [http://localhost:8000:5000/](http://localhost:8000:5000/) in your web browser, and you should be able to see the sample dashboard.
 4. You should see a sample dashboard page as shown below:
 ![Sample Web](https://raw.githubusercontent.com/wiki/paypal/PayPal-PHP-SDK/images/sample_web.gif)
 
@@ -43,7 +43,7 @@ There are two other ways you could run your samples, as shown below:
 
     * You could host the entire project in your local web server, by using tools like [MAMP](http://www.mamp.info/en/) or [XAMPP](https://www.apachefriends.org/index.html).
     * Once done, you could easily open the samples by opening the matching URL. For e.g.:
-`http://localhost/PayPal-PHP-SDK/paypal/rest-api-sdk-php/sample/index.html`
+`http://localhost:8000/PayPal-PHP-SDK/paypal/rest-api-sdk-php/sample/index.html`
 
 * #### Alternatives: Running on console
     > Please note that there are few samples that requires you to have a working local server, to receive redirects when user accepts/denies PayPal Web flow

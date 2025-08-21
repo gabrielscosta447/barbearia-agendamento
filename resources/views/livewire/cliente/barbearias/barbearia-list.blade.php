@@ -93,7 +93,7 @@
       </svg>
     </button>
       <img
-      src="http://localhost/storage/{{ $barbearia->imagem }}"
+      src="http://localhost:8000/storage/{{ $barbearia->imagem }}"
       class=" w-full h-[350px] object-cover"
 
         alt="ui/ux review check" />
@@ -272,7 +272,7 @@ fill="none"
   data-te-ripple-color="light"
   class="mb-2 inline-block rounded px-6 py-5 text-xs font-medium uppercase leading-normal text-white shadow-md transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg"
 
-  href="https://www.facebook.com/sharer/sharer.php?u=http://localhost/{{ $selectedBarbearia->slug }}&quote=Conheça%20a%20barbearia:%20{{ urlencode($selectedBarbearia->nome) }}""
+  href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:8000/{{ $selectedBarbearia->slug }}&quote=Conheça%20a%20barbearia:%20{{ urlencode($selectedBarbearia->nome) }}""
   style="background-color: #1877f2">
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -305,7 +305,7 @@ fill="none"
   <a
 
 
-      href="https://twitter.com/intent/tweet?url=http://localhost/{{ $selectedBarbearia->slug }}&text=Conheça a  barbearia: {{ $selectedBarbearia->nome }}"
+      href="https://twitter.com/intent/tweet?url=http://localhost:8000/{{ $selectedBarbearia->slug }}&text=Conheça a  barbearia: {{ $selectedBarbearia->nome }}"
 
     target="_blank"
   data-te-ripple-init
@@ -320,7 +320,7 @@ fill="none"
   data-te-ripple-init
   target="_blank"
   data-te-ripple-color="light"
-  href="https://wa.me/?text=Confira%20esta%20barbearia: http://localhost/{{ $selectedBarbearia->slug }}&app_absent=0"
+  href="https://wa.me/?text=Confira%20esta%20barbearia: http://localhost:8000/{{ $selectedBarbearia->slug }}&app_absent=0"
   class="mb-2 inline-block rounded px-6 py-5 text-xs font-medium uppercase leading-normal text-white shadow-md transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg"
   style="background-color: #128c7e">
   <svg
@@ -363,7 +363,7 @@ fill="none"
             Copiar Link
           </button>
           @if($selectedBarbearia)
-          <div id="copy-target-2" class=" hidden border border-blue-600 rounded-md  p-5 mt-2">http://localhost/{{ $selectedBarbearia->slug }}</div>
+          <div id="copy-target-2" class=" hidden border border-blue-600 rounded-md  p-5 mt-2">http://localhost:8000:8000/{{ $selectedBarbearia->slug }}</div>
           @endif
           </div>
       </div>

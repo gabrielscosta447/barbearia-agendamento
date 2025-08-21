@@ -482,7 +482,7 @@ data-te-navbar-ref>
   <!-- Section: Design Block -->
   <section class="mb-3 mt-5">
     <div
-      class="relative   lg:h-[300px]  w-[85%] max-sm:w-[100%] rounded-lg mx-auto overflow-hidden bg-cover bg-[50%] bg-no-repeat" style="background-image: url('http://localhost/fundopreto.jpg')">
+      class="relative   lg:h-[300px]  w-[85%] max-sm:w-[100%] rounded-lg mx-auto overflow-hidden bg-cover bg-[50%] bg-no-repeat" style="background-image: url('http://localhost:8000/fundopreto.jpg')">
     </div>
 
       <div class="block  m-auto w-[80%] max-sm:w-[100%] rounded-lg bg-[hsla(0,0%,100%,0.7)]  lg:px-6 py-12 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-[hsla(0,0%,5%,0.7)] dark:shadow-black/20 md:py-16 md:px-12 lg:-mt-[100px] mt-[2px] lg:backdrop-blur-md  " >
@@ -524,7 +524,7 @@ data-te-navbar-ref>
           data-te-ripple-color="light">
           <img
             class="rounded-t-lg  object-cover "
-            src="http://localhost/storage/{{ $barbearia->imagem }}"
+            src="http://localhost:8000/storage/{{ $barbearia->imagem }}"
            style="width: 450px; height: 317px;"
             alt="" />
           <a href="/{{$barbearia->slug}}"
