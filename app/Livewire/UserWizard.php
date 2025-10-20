@@ -58,48 +58,6 @@ class UserWizard extends WizardComponent
     MercadoPagoConfig::setAccessToken($accessToken);
     MercadoPagoConfig::setRuntimeEnviroment(MercadoPagoConfig::LOCAL);
 
-
-
-  /*    $client_customer = new CustomerClient();
-
-    $client = new CustomerCardClient();
-
- 
-    $response = Http::withHeaders([
-        'Authorization' => 'Bearer ' . $accessToken,
-        'Accept' => 'application/json',
-    ])->get('https://api.mercadopago.com/v1/customers/search', [
-        'email' => $cardFormData['payer']['email']
-    ]);
-    
-    if(isset($response->json()['results'][0])) {
-        $customer_card = $client->create($response->json()['results'][0]['id'], ["token" => $cardFormData['token']]);
-    
-
-    
-   
-    
-    
-    } else {
-        $client_customer = new CustomerClient();
-        $customer = $client_customer->create(["email" =>  $cardFormData['payer']['email']]);
-
-   
-        $client = new CustomerCardClient();
-        $customer_card = $client->create($customer->id, ["token" => $cardFormData['token']]);
-    
-     
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $accessToken,
-            'Accept' => 'application/json',
-        ])->get("https://api.mercadopago.com/v1/{$customer->id}/cards");
-    
-        dd($response->json());
-    } */
- 
-   
-
-
     $client = new PreApprovalPlanClient();
     $planData = [
         'reason' => 'Barbearia John',
