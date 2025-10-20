@@ -92,6 +92,8 @@ class AgendarBarbearia extends Component
  public function AgendarHorario()
  {
 
+    
+
      $this->authorize('agendar', $this->barbearia);
      $this->authorize('authenticated', auth()->user());
 

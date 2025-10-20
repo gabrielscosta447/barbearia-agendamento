@@ -32,6 +32,7 @@ use App\Livewire\EstoqueProduto;
 use App\Livewire\Gerenciar\Telas\Promocoes;
 use App\Http\Controllers\TokenController;
 
+use App\Http\Controllers\BancodoBrasilController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -66,6 +67,8 @@ Route::get('/criar-plano', [MercadoPago::class, 'criar']);
 
 Route::get('/instagram', [InstagramController::class, 'instagram']);
 Route::get('/mercadopagoprecos',[MercadoPago::class, 'atualizarPrecos']);
+
+Route::get('/criar-pagamento-pix', [BancodoBrasilController::class, 'criarPagamentoPix']);
 
 
 Route::post('/nova', [TokenController::class, 'store'])->middleware('auth');
