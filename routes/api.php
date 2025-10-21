@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BancodoBrasilController;
 use App\Models\Barbearia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,7 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
+Route::post('/criar-pagamento-pix', [BancodoBrasilController::class, 'criarPagamentoPix']);
 
 Route::get('/{barbearia}/clientes', function (Barbearia $barbearia) {
     $clientes = $barbearia->clientes;

@@ -15,7 +15,7 @@ class BancodoBrasilController extends Controller
         $bancoDoBrasilService = new BancoDoBrasilService();
         $response = $bancoDoBrasilService->criarPagamentoPix();
 
-        return response()->json($response);
+        return $response->body();
     }
   
 }

@@ -27,7 +27,6 @@ class BancoDoBrasilService
      */
     public function authenticate(string $clientId, string $clientSecret, ?string $scope = null): string
     {
-        $basic = base64_encode($clientId . ':' . $clientSecret);
 
         $form = [
             'grant_type' => 'client_credentials',
@@ -37,10 +36,12 @@ class BancoDoBrasilService
             $form['scope'] = $scope;
         }
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Basic ' . $basic,
-            'Content-Type' => 'application/x-www-form-urlencoded',
-        ])->asForm()->post('https://oauth.bb.com.br/oauth/token', $form);
+        $response = $response = Http::asForm() // igual ao "x-www-form-urlencoded" do Postman
+            ->withBasicAuth($clientId, $clientSecret)
+            ->post(env('BANCO_DO_BRASIL_BASE_URL'), [
+                'grant_type' => 'client_credentials',
+                'scope' => 'cob.read cob.write pix.read pix.write',
+            ]);
 
         if ($response->successful()) {
             $data = $response->json();
@@ -65,23 +66,22 @@ class BancoDoBrasilService
             "devedor" => [
                 "nome" => "Nome do Devedor",
                 "cpf" => "12345678909",
-                "cnpj" => "12345678000195"
             ],
 
          "valor" => [
             "original" => "100.00"
          ],
-         "chave" => "seu-pix-chave-aqui"
+         "chave" => "testqrcode01@bb.com.br"
 
         ];
 
 
-        $accessToken = $this->authenticate($this->clientId, $this->clientSecret, 'cob.read cob.write pix.read pix.write');
+        $accessToken = $this->authenticate($this->clientId, $this->clientSecret);
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $accessToken,
             'Content-Type' => 'application/json',
-        ])->post('https://api-pix.hm.bb.com.br/pix/v2/cob', $form);
+        ])->post('https://api.hm.bb.com.br/pix/v2/cob?gw-dev-app-key=' . env('BANCO_DO_BRASIL_APP_KEY'), $form);
 
 
         return $response;
