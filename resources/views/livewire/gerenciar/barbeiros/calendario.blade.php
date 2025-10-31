@@ -58,14 +58,11 @@
 
 @if($this->date)
     @php
+
+
         $carbonDate = \Carbon\Carbon::parse($this->date);
         $carbonDateFinal = \Carbon\Carbon::parse($this->dateFinal);
         $dayOfWeek = ((int)$carbonDate->format('N')) % 7;
-
-   
-          
- 
-  
 
 
         $diaAdicionado = $barbeiro->specificDates()
@@ -100,8 +97,7 @@
                                       ->exists();
                 $horarios =  $barbeiro->workingHours()->get();
     @endphp
-            @dump( $horaAtual,$horaFinal)
-           @dump($dentroDosHorarios, $diaRemovido, $diaAdicionado)
+ @if($this->viewType == 'dayGridDay' || $this->viewType == 'timeGridDay' || $this->viewType == 'timeGridWeek')
     @if($dentroDosHorarios == false )
         
          @if($diaAdicionado == true)
@@ -135,77 +131,104 @@
             Remover dia de trabalho
         </button>
     @endif
+    @elseif($this->viewType === 'dayGridMonth')
+    <p class="text-gray-600">Mude para a visualização diária ou semanal para editar dias específicos.</p>
+@else
+    <p class="text-gray-600">Mude para a visualização diária ou semanal para editar dias específicos.</p>   
 @endif
+@endif
+
 </x-modal.card>
 
-<livewire:gerenciar.barbeiros.dates-list :barbeiro="$barbeiro" />
 
-<div  x-data="bob" x-init="initCalendar($refs.calendar)"wire:ignore  >
+<div  x-data="bob" x-init="initCalendar($refs.calendar)" wire:ignore  >
     <div x-ref="calendar"  class="w-full mx-auto"></div>
 </div>
 @assets
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js' ></script>
+<!-- 1️⃣ Carrega Moment e Moment-Timezone primeiro -->
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment-timezone@0.5.43/builds/moment-timezone-with-data.min.js"></script>
+
+<!-- 2️⃣ Agora sim o FullCalendar -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
+
+<!-- 3️⃣ Plugins do FullCalendar -->
 <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/moment@6.1.9/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/moment-timezone@6.1.10/index.global.min.js" ></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/locales/pt-br.js" ></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/moment-timezone@6.1.9/index.global.min.js"></script>
+
+<!-- 4️⃣ Todas as traduções -->
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/core@6.1.9/locales/pt-br.global.min.js"></script>
  @endassets
 @script
     <script>
-   Alpine.data('bob', () => ({
-
+ Alpine.data('bob', () => ({
     date: " ",
-              initCalendar(calendarEl){
-                if (typeof moment !== 'undefined' && moment.tz) {
-                    console.log(moment.tz.setDefault('America/Sao_Paulo'));
-                } else {
-                    console.error("Moment Timezone is not available.");
-                    return;
-                }
-                    const calendar = new FullCalendar.Calendar(calendarEl, {
-                        headerToolbar: {
-                            left: 'prev,next today',
-                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                        },
-                        timeZone:  'America/Sao_Paulo',
-                        editable: true,
-                        events: @json($agendamentos),
-                        selectable: true,
-                        locale: 'pt-br',
-                        select: function(data) {
-                            Livewire.dispatch('open-modal', {
-                                date: data,
-                            });
-                        },
-                        eventDrop: function(data) {
-                            @this.updateEvent(
-                                data.event.id,
-                                data.event.name,
-                                data.event.start.toISOString(),
-                                data.event.end.toISOString()
-                            ).then(function() {
-                                // Se desejar, você pode adicionar algum código aqui após a atualização do evento
-                            });
-                        },
-                        eventClick: function(data) {
-              
-               @this.aparecerAgendamento(
-                  data.event.id
-               )
-                
-               
-            },
-                        businessHours: @json($jsonHorarios)
-                    });
+    calendar: null, // guarda o calendário para acessar depois
 
-                    console.log(new Date());
-                    calendar.render();
-                    console.log(@json($agendamentos));
-                
-            
-        
-    }}));
+    initCalendar(calendarEl) {
+        if (typeof moment !== 'undefined' && moment.tz) {
+            moment.tz.setDefault('America/Fortaleza');
+        } else {
+            console.error("Moment Timezone is not available.");
+            return;
+        }
+
+        // Cria o calendário e guarda em this.calendar
+        this.calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            timeZone: 'America/Fortaleza',
+            editable: true,
+            events: @json($agendamentos),
+            selectable: true,
+            locale: 'pt-br',
+            buttonText: {
+                today: 'Hoje',
+                month: 'Mês',
+                week: 'Semana',
+                day: 'Dia'
+            },
+
+            select: (data) => {
+               const start = moment.tz(data.start, 'America/Fortaleza').format('YYYY-MM-DD HH:mm:ss');
+    const end = moment.tz(data.end, 'America/Fortaleza').format('YYYY-MM-DD HH:mm:ss');
+    
+    Livewire.dispatch('open-modal', { date: start, dateFinal: end });
+            },
+            datesSet: (info) => {
+                @this.updateViewType(info.view.type);
+            },
+            eventDrop: (data) => {
+                @this.updateEvent(
+                    data.event.id,
+                    data.event.name,
+                    data.event.start.toISOString(),
+                    data.event.end.toISOString(),
+                );
+            },
+            eventClick: (data) => {
+                @this.aparecerAgendamento(data.event.id);
+            },
+            businessHours: @json($jsonHorarios)
+        });
+
+        this.calendar.render();
+
+      Livewire.on('refreshCalendarEvents', (eventos) => {
+       console.log("Atualizando eventos do calendário:", eventos);
+    this.calendar.removeAllEvents();
+   this.calendar.addEventSource(eventos[0]);
+this.calendar.refetchEvents();
+    
+});
+
+    }
+}));
+
     </script>
   @endscript
   <x-modal wire:model.defer="modalAparecer">
@@ -232,4 +255,5 @@
     </x-card>
     @endif
 </x-modal>
+
 </div>

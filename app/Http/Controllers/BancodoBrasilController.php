@@ -9,11 +9,13 @@ use App\Http\Service\BancoDoBrasilService;
 class BancodoBrasilController extends Controller
 {
 
-    public function criarPagamentoPix()
+    public function criarPagamentoPix(Request $request)
     {
 
+        $valor = $request->input('valor');
+
         $bancoDoBrasilService = new BancoDoBrasilService();
-        $response = $bancoDoBrasilService->criarPagamentoPix();
+        $response = $bancoDoBrasilService->criarPagamentoPix($valor);
 
         return $response->body();
     }

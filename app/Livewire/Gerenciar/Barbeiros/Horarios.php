@@ -37,32 +37,7 @@ class Horarios extends Component
 
    
 
-  /*   public function updatedBarbeiroModel($value)
-    {
-        if ($value) {
-            $this->barbeiroSelecionado = Barbeiros::findOrFail($value);
-          
-    
-            foreach ($this->allDaysOfWeek as $day) {
-                $workingHour = $this->barbeiroSelecionado->workingHours->firstWhere('day_of_week', $day);
-    
-                if ($workingHour) {
-                    $this->dias[$day] = true;
-                    $this->horariosIniciais[$day] = $workingHour->start_hour;
-                    $this->horariosFinais[$day] = $workingHour->end_hour;
-                } else {
-                 
-                    $this->horariosIniciais[$day] = null;
-                    $this->horariosFinais[$day] = null;
-                }
-            }
-        }
-        
-    } */
-
     #[On('equipe-edit-canceled')]
-
-    
     public function disableEditing()
     {
    $this->editing = null;

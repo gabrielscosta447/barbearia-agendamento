@@ -15,6 +15,7 @@
           <x-radio id="md" label="Passados" lg wire:model.change="option" value="passado" />
           <x-radio id="md" label="Futuros" lg wire:model.change="option"  value="futuro" />
           <x-radio id="md" label="Concluídos" lg wire:model.change="option" value="concluido" />
+          <x-radio id="md" label="Pendentes" lg wire:model.change="option" value="pendente" />
         </div>
       </div>
      
@@ -61,6 +62,9 @@
           Barbearia: {{ ucfirst($agendamento->colaborador->barbearia->nome) }}
     
            </p>
+              <p class="block mt-1 font-sans text-xl antialiased font-normal leading-relaxed text-gray-700">
+          Agendado ás: {{ \Carbon\Carbon::parse($agendamento->created_at)->format('d/m/Y H:i') }}
+           </p>
     </div>
     <div class="flex items-center justify-between p-6">
       <div class="flex items-center -space-x-3">
@@ -72,9 +76,13 @@
       </div>
       @if(!$agendamento->trashed())
   
-    
+      @if($option !== 'pendente')
       <x-button   class="rounded bg-black px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-gray-900 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-gray-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-black active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]" black label="Editar" spinner="edit({{ $agendamento->id }})" 
         spinner="abrirModal({{ $agendamento->id }})" wire:click="abrirModal({{ $agendamento->id }})" />
+      @else
+      <x-button   class="rounded bg-emerald-600 px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-emerald-700 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-emerald-500 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-emerald-600 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]" black label="Pagar" spinner="pay({{ $agendamento->id }})" 
+        spinner="pay({{ $agendamento->id }})" wire:click="pay({{ $agendamento->id }})" />
+      @endif
 
       @endif
     </div>

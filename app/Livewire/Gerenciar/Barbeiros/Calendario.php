@@ -32,6 +32,8 @@ class Calendario extends Component
     public $horarios;
     public  $selectedAgendamento;
     public $modalAparecer;
+    public $agendamentos = [];
+    public $viewType;
 
  
     protected $listeners = ['opcaoAtualizada' => 'handleOpcaoAtualizada'];
@@ -58,8 +60,8 @@ class Calendario extends Component
 
     
     }
+
     public function handleOpcaoAtualizada($value) {
-         dd($value);
         $this->barbeiro = BarbeariaUser::findOrFail($value);
     }
        
@@ -87,10 +89,10 @@ class Calendario extends Component
        $agendamento->save();
     }
 #[On('open-modal')]
-    public function abirModal($date) {
+    public function abirModal($date, $dateFinal) {
           
-        $this->date  =  Carbon::parse($date['start'])->format('Y-m-d H:i:s');
-     $this->dateFinal = Carbon::parse($date['end'])->format('Y-m-d H:i:s');
+        $this->date  =  Carbon::parse($date)->format('Y-m-d H:i:s');
+     $this->dateFinal = Carbon::parse($dateFinal)->format('Y-m-d H:i:s');
 
   
      
@@ -103,6 +105,7 @@ class Calendario extends Component
     }
 
     public function add(){
+  
         $existingSpecificDate = SpecificDate::where('start_date', Carbon::parse($this->date))
                                              ->where('end_date', Carbon::parse($this->dateFinal))
                                              ->where('barbearia_user_id', $this->barbeiro->id)
@@ -121,9 +124,61 @@ class Calendario extends Component
             $specificDate->status = 'adicionar';
             $specificDate->save();
         }
+       
+
+ // 🔁 Atualiza os eventos
+    $this->atualizarEventos();
+
+    // 🔥 Envia para o front atualizar FullCalendar
+    $this->dispatch('refreshCalendarEvents', $this->agendamentos);
+     
+
     }
+    public function updateViewType($viewType) {
+        $this->viewType = $viewType;
     
+    }
+  
+    private function atualizarEventos()
+{
+    $this->agendamentos = [];
+
+    // Agendamentos normais
+    foreach ($this->barbeiro->agendamentos->where('pago', 1) ?? [] as $agendamento) {
+        $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $agendamento->start_date);
+        $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $agendamento->end_date);
+
+        $this->agendamentos[] = [
+            'id' => $agendamento->id,
+            'title' => 'Agendamento',
+            'start' => $startDate->toIso8601String(),
+            'end' => $endDate->toIso8601String(),
+        ];
+    }
+
+    // Dias adicionais
+    foreach ($this->barbeiro->specificDates()->where('status', 'adicionar')->get() as $specific) {
+        $this->agendamentos[] = [
+            'start' => Carbon::parse($specific->start_date)->toIso8601String(),
+            'end' => Carbon::parse($specific->end_date)->toIso8601String(),
+            'display' => 'background',
+            'color' => '#c6f6d5', // verde claro opcional
+        ];
+    }
+
+    // Dias removidos
+    foreach ($this->barbeiro->specificDates()->where('status', 'remover')->get() as $specific) {
+        $this->agendamentos[] = [
+            'start' => Carbon::parse($specific->start_date)->toIso8601String(),
+            'end' => Carbon::parse($specific->end_date)->toIso8601String(),
+            'display' => 'background',
+            'color' => 'lightgrey',
+        ];
+    }
+}
+
     public function remover() {
+
         $existingSpecificDate = SpecificDate::where('start_date', Carbon::parse($this->date))
         ->where('end_date', Carbon::parse($this->dateFinal))
         ->where('barbearia_user_id', $this->barbeiro->id)
@@ -142,20 +197,26 @@ class Calendario extends Component
             $specificDate->status = 'remover';
             $specificDate->save();
         }
+   
+        // 🔁 Atualiza os eventos
+    $this->atualizarEventos();
+
+    // 🔥 Envia para o front atualizar FullCalendar
+    $this->dispatch('refreshCalendarEvents', $this->agendamentos);
     }
     public function render()
     {
       
 
         $user = auth()->user();
-        $agendamentos = [];
+  
 
-        foreach ($this->barbeiro->agendamentos ?? [] as $agendamento) {
+        foreach ($this->barbeiro->agendamentos->where('pago', 1) ?? [] as $agendamento) {
             $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $agendamento->start_date);
             $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $agendamento->end_date);
 
     
-            $agendamentos[] =  [
+            $this->agendamentos[] =  [
              
                 'id' => $agendamento->id,
                 'title' => 'Agendamento',
@@ -169,7 +230,7 @@ class Calendario extends Component
             $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $specific->start_date);
             $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $specific->end_date);
 
-            $agendamentos[] = [
+            $this->agendamentos[] = [
                 'start' => $startDate->toIso8601String(),
                 'end' => $endDate->toIso8601String(),
                 'display' => 'background',
@@ -184,7 +245,7 @@ class Calendario extends Component
             $startDate = Carbon::createFromFormat('Y-m-d H:i:s', $specific->start_date);
             $endDate = Carbon::createFromFormat('Y-m-d H:i:s', $specific->end_date);
 
-            $agendamentos[] = [
+            $this->agendamentos[] = [
                 'start' => $startDate->toIso8601String(),
                 'end' => $endDate->toIso8601String(),
                 'display' => 'background',
@@ -192,9 +253,6 @@ class Calendario extends Component
             
             ];
         }
-        return view('livewire.gerenciar.barbeiros.calendario', [
-            'agendamentos' => $agendamentos,
-          
-        ]);
+        return view('livewire.gerenciar.barbeiros.calendario');
     }
 }

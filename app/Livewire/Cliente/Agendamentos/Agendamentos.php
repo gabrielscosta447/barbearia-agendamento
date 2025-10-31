@@ -62,6 +62,10 @@ public function mount() {
       
     }
 
+     public function pay($id) {
+       
+        return redirect()->to('/pagar/'.$id);
+    }
 
     public function editar($id)
     {
@@ -219,19 +223,22 @@ public function agendamentos() {
     $now = now();
 
     //Lógica para não aparecer os eventos cancelados para o usuário
-    $query = auth()->user()->eventos();
+    $query = auth()->user()->eventos()->orderBy('created_at', 'desc');
  
 
     switch ($this->option) {
         case 'concluido':
-            $query->onlyTrashed();
+            $query->onlyTrashed()->where('pago', 1);
             break;
         case 'passado':
-            $query->where('start_date', '<', $now);
+            $query->where('start_date', '<', $now)->where('pago', 1);
             break;
         case 'futuro':
-            $query->where('start_date', '>', $now);
+            $query->where('start_date', '>', $now)->where('pago', 1);
             break;
+         case 'pendente':
+                $query->where('pago', 0);
+                break;
         default:
             return collect(); // Retorna uma coleção vazia se a opção for desconhecida
     }

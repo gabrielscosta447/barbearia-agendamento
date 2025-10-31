@@ -26,6 +26,7 @@
         "livewire/livewire": "^3.0",
         "mercadopago/dx-php": "^3.0",
         "paypal/rest-api-sdk-php": "^1.6",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "vildanbina/livewire-wizard": "^2.0",
         "wireui/wireui": "*"
     },

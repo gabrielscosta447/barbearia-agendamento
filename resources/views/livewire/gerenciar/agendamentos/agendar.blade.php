@@ -56,11 +56,7 @@
            <livewire:cliente.agendamentos.date-picker  wire:model="date" :formattedDates="$formattedDates"  :barbeiroSelecionado="$barbeiro" :key="$barbeiro->id" />
            @endif
   </x-modal.card>
-  <label for="cronograma">Cronograma</label>
-  <input type="radio" id="cronograma" name="viewMode" wire:model.change="opcao"  value="cronograma" >
-  
-  <label for="lista">Lista</label>
-  <input type="radio" id="lista" name="viewMode" wire:model.change="opcao" value="lista">
+
     
 
   @if($this->opcao == "cronograma")

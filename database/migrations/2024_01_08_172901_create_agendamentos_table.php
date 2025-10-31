@@ -21,7 +21,9 @@ return new class extends Migration
             $table->foreign('barbearia_user_id')->references('id')->on('barbearia_users')->onDelete('cascade');
             $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('cascade');
             $table->foreign('maquininha_id')->references('id')->on('maquininhas')->onDelete('cascade');
-            $table->string("payment_method")->nullalbe();
+            $table->string("payment_method")->nullable();
+            $table->boolean("pago")->default(0);
+            $table->string("id_pix")->nullable();
             $table->dateTime("start_date");
             $table->dateTime("end_date");
             $table->softDeletes();

@@ -18,6 +18,7 @@ use App\Models\UserCorte;
 use App\Models\Barbearia;
 use App\Models\Cliente;
 use App\Models\User;
+use App\Http\Service\BancoDoBrasilService;
 
 class AgendarBarbearia extends Component
 {
@@ -225,16 +226,18 @@ class AgendarBarbearia extends Component
 
 
 
-     $this->saveAgendamento($agendamento, $end_date_clone);
+  $agendamentoObj =   $this->saveAgendamento($agendamento, $end_date_clone);
+
      if(!$this->cliente) {
-     $this->redirect('/home?tab=pills-contact8');
+  $this->redirect('/pagar/'.$agendamentoObj->id);
+
      } else {
 
         $this->barbeiroModel = null;
         $this->dispatch('refrigerar');
         $this->dispatch('cancelarEditmode');
      }
-
+ 
      if($this->cliente?->user_id) {
         $firebaseToken = $this->cliente->user->token;
      } elseif($agendamento->owner_id) {
@@ -291,7 +294,8 @@ class AgendarBarbearia extends Component
     } catch(\Exception $e) {
         dd($e);
     }
-
+   
+   $this->redirect('/pagar/'.$agendamentoObj->id);
  }
 
  #[Computed]
@@ -337,6 +341,10 @@ class AgendarBarbearia extends Component
       $total += $corteSelecionado->preco;
 
     }
+$totalFormatado = number_format($total, 2, '.', '');
+   $bancoDoBrasilService = new BancoDoBrasilService();
+   $response = $bancoDoBrasilService->criarPagamentoPix($totalFormatado);
+    $agendamento->id_pix = $response['txid'];
     $agendamento->total_price = $total;
      $agendamento->end_date = $end_date_clone;
      $agendamento->save();
@@ -365,6 +373,7 @@ class AgendarBarbearia extends Component
      Cache::forget($cacheKey);
      $this->dispatch('agendamento-salvo');
      session()->flash('status', 'Post successfully updated.');
+     return $agendamento;
  }
 
     private function convertTimeToMinutes($time)

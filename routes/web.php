@@ -23,6 +23,7 @@ use App\Http\Controllers\MercadoPago;
 use App\Http\Controllers\Webhooks;
 use App\Livewire\Gerenciar\Barbeiros\Calendario;
 use App\Livewire\Subscribe;
+use App\Livewire\PagarAgendamento;
 
 use App\Livewire\Plano;
 use App\Livewire\Gerenciar\Telas\Services;
@@ -63,7 +64,7 @@ Route::get('/byebye', [MercadoPago::class, 'index']);
 
 
 Route::get('/criar-plano', [MercadoPago::class, 'criar']);
-
+Route::get('/pagar/{id}', PagarAgendamento::class);
 
 Route::get('/instagram', [InstagramController::class, 'instagram']);
 Route::get('/mercadopagoprecos',[MercadoPago::class, 'atualizarPrecos']);

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 
 use App\Models\BarbeariaUser;
+use App\Models\Agendamento;
 
 class Webhooks extends Controller
 {
@@ -85,6 +86,26 @@ class Webhooks extends Controller
         Log::warning('Barbearia não encontrada para o pagamento recebido.', ['external_reference' => $response->json()['external_reference']]);
     }
 }
+
+    }
+
+    public function webhookBB(Request $request){
+
+       $agendamentoModel = new Agendamento();
+
+         $agendamento = $agendamentoModel->where('id_pix', $request->input('txid'))->first();
+
+         if($request->input('status') === 'CONCLUIDA') {
+            if($agendamento) {
+                $agendamento->pago = 1;
+                $agendamento->save();
+            }
+         }
+         if($request->input('status') === 'VENCIDA' || $request->input('status') === 'EXPIRADA') {
+            if($agendamento) {
+                $agendamento->delete();
+            }
+         }
 
     }
 

@@ -75,7 +75,7 @@ public function agendamentosFiltrados()
 {
 
 
-    return $this->barbearia->barbeiros->where("id", $this->barbeiros)->first()?->agendamentos()->whereDate("start_date",Carbon::parse($this->date))->withTrashed()->paginate(10);
+    return $this->barbearia->barbeiros->where("id", $this->barbeiros)->first()?->agendamentos()->whereDate("start_date",Carbon::parse($this->date))->where("pago", 1)->withTrashed()->paginate(10);
 }
 
 #[Computed]
