@@ -18,7 +18,7 @@ class Webhooks extends Controller
 {
     public function webhook(Request $request){
    
-      $accessToken = 'APP_USR-3577992641079180-011721-ff207db72804f196d2066d2931ed850c-1644143944';
+      $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN");
 
      
     
@@ -30,7 +30,7 @@ class Webhooks extends Controller
                 'Accept' => 'application/json',
             ])->get("https://api.mercadopago.com/preapproval/{$request->input("data.id")}");
             
-            $accessToken = 'APP_USR-3577992641079180-011721-ff207db72804f196d2066d2931ed850c-1644143944';
+            $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN");
             $barbearia = BarbeariaUser::withTrashed()->where('id', $response->json()['external_reference'])->first();
 
 

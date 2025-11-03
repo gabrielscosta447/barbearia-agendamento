@@ -21,9 +21,9 @@ class PagarAgendamento extends Component
         $this->qrCodePix = base64_encode(QrCode::format('png')->size(250)->generate($pixCopiaECola));
         $this->pixCopiaECola = $pixCopiaECola;
     }
-    public function copiarPix() {
-        $this->dispatch('copiarPix', $this->pixCopiaECola);
-        $this->copiado = true;
+   
+    public function voltar() {
+        return $this->redirect('/home?tab=pills-contact8', navigate: true);
     }
     public function render()
     {

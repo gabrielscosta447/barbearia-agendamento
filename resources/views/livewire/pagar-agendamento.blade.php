@@ -26,8 +26,8 @@
                 id="pixCopiaECola"
             />
             <button
-                wire:click="copiarPix"
                 type="button"
+                id="btnCopiarPix"
                 class="bg-green-600 hover:bg-green-700 text-black text-sm font-medium px-4 py-2 rounded-lg transition-colors"
             >
                 Copiar
@@ -35,34 +35,55 @@
         </div>
 
         {{-- Feedback visual --}}
-        @if ($copiado)
-            <div
-                x-data="{ show: true }"
-                x-show="show"
-                x-transition
-                x-init="setTimeout(() => show = false, 2500)"
-                class="flex items-center mt-3 text-green-700 bg-green-100 border border-green-200 rounded-lg p-2 text-sm"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                Código Pix copiado!
-            </div>
-        @endif
+        <div
+            id="msgCopiado"
+            class="hidden flex items-center mt-3 text-green-700 bg-green-100 border border-green-200 rounded-lg p-2 text-sm"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            Código Pix copiado!
+        </div>
     </div>
 
     {{-- Rodapé opcional --}}
     <p class="text-xs text-gray-400 text-center mt-6">
         O pagamento será confirmado automaticamente após a compensação.
     </p>
+
+    <button
+        type="button"
+        data-te-ripple-init
+        data-te-ripple-color="light"
+        wire:click="voltar"
+        class="mt-4 rounded bg-gray-200 px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-black shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-gray-300 focus:bg-gray-400 active:bg-gray-500"
+    >
+        VOLTAR
+    </button>
 </div>
 
-@script
 <script>
-    Livewire.on('copiarPix', (data) => {
-        navigator.clipboard.writeText(data)
-            .then(() => console.log('Pix copiado!'))
-            .catch(err => console.error('Erro ao copiar Pix:', err));
+document.addEventListener('livewire:navigated', () => { 
+        const btnCopiar = document.getElementById('btnCopiarPix');
+        const inputPix = document.getElementById('pixCopiaECola');
+        const msgCopiado = document.getElementById('msgCopiado');
+
+        btnCopiar.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(inputPix.value);
+                
+                // Mostrar feedback
+                msgCopiado.classList.remove('hidden');
+                msgCopiado.classList.add('flex');
+
+                // Esconder após 2.5 segundos
+                setTimeout(() => {
+                    msgCopiado.classList.add('hidden');
+                    msgCopiado.classList.remove('flex');
+                }, 2500);
+            } catch (err) {
+                console.error('Erro ao copiar Pix:', err);
+            }
+        });
     });
 </script>
-@endscript

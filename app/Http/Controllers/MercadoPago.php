@@ -340,7 +340,7 @@ public function criar() {
 }
 
 public function atualizarPrecos() {
-    $accessToken = 'APP_USR-3577992641079180-011721-ff207db72804f196d2066d2931ed850c-1644143944';
+    $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN");
   $preapprovalID = '2c9380849075726001907b4af1280234'; 
 
 /*  $response1 = Http::withHeaders([
@@ -482,7 +482,7 @@ $jsonPlanResponse = $planResponse->json();
 
 public function index()
 {
-    $accessToken = 'APP_USR-3577992641079180-011721-ff207db72804f196d2066d2931ed850c-1644143944'; 
+    $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN"); 
 
 
    /*  $response = Http::withHeaders([

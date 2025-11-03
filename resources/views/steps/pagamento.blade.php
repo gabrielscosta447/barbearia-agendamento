@@ -1,6 +1,6 @@
 
 @php
- $accessToken = 'APP_USR-3577992641079180-011721-ff207db72804f196d2066d2931ed850c-1644143944';
+ $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN");
 
 
  \MercadoPago\MercadoPagoConfig::setAccessToken($accessToken);

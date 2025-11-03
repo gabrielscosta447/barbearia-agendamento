@@ -64,7 +64,7 @@ public function mount() {
 
      public function pay($id) {
        
-        return redirect()->to('/pagar/'.$id);
+        return $this->redirect('/pagar/'.$id, navigate: true);
     }
 
     public function editar($id)
@@ -243,7 +243,7 @@ public function agendamentos() {
             return collect(); // Retorna uma coleção vazia se a opção for desconhecida
     }
 
-    return $query->paginate(10);
+    return $query;
 }
 
     public function limpar() {

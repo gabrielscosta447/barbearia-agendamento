@@ -35,7 +35,7 @@ class VerificarPagamento implements ShouldQueue
  */
 public function handle(): void
 {
-    $accessToken = 'APP_USR-3577992641079180-011721-ff207db72804f196d2066d2931ed850c-1644143944';
+    $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN");
     $barbeariasPix = BarbeariaUser::whereIn("payment_method", [PaymentMethods::pix, PaymentMethods::bolbradesco])->where("price", 15)->get();
     $barbeariaAssinatura = BarbeariaUser::whereIn("payment_method", [PaymentMethods::credit_card, PaymentMethods::debit_card])->where("price", 15)->get();
 

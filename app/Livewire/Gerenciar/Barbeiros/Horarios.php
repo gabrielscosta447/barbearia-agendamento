@@ -35,8 +35,6 @@ class Horarios extends Component
     
     }
 
-   
-
     #[On('equipe-edit-canceled')]
     public function disableEditing()
     {
@@ -45,11 +43,6 @@ class Horarios extends Component
  
     } 
 
-  
- 
-
-  
-    
 
     public function render()
     {
