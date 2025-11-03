@@ -92,7 +92,7 @@ class User extends Authenticatable /* implements MustVerifyEmail */
     {
         try {
             // Defina seu token de acesso do MercadoPago
-            MercadoPagoConfig::setAccessToken("APP_USR-3577992641079180-011721-ff207db72804f196d2066d2931ed850c-1644143944");
+            MercadoPagoConfig::setAccessToken(env("MERCADO_PAGO_ACCESS_TOKEN"));
     
             // Verifique se os cartões estão armazenados em cache
             $cachedCards = Cache::remember('mercado_pago_cards_' . $this->payer_id, now()->addHours(6), function () {

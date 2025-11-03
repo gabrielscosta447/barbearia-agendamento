@@ -40,7 +40,7 @@ class Colaborador extends Component
  
 
     public function editarAssinatura(BarbeariaUser $barbeiro, $formData,$paymentMethod){
-        $accessToken = "APP_USR-3577992641079180-011721-ff207db72804f196d2066d2931ed850c-1644143944";
+        $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN");
              if($barbeiro->payment_method->value == "Cartão de Crédito" || $barbeiro->payment_method->value == "Cartão de Débito" ){
                           if($paymentMethod == "debit_card" || $paymentMethod == "credit_card" ){
                                   $barbeiro->payment_id = null;
@@ -139,7 +139,7 @@ class Colaborador extends Component
            
         
             // Token de autenticação
-            $accessToken = "APP_USR-3577992641079180-011721-ff207db72804f196d2066d2931ed850c-1644143944";
+            $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN");
         
             // Endpoint da API de pagamento
             $url = "https://api.mercadopago.com/preapproval/{$barbeiro->assinatura_id}";
@@ -158,8 +158,8 @@ class Colaborador extends Component
     }
     public function save($cardFormData) {
         try {
-            MercadoPagoConfig::setAccessToken("APP_USR-3577992641079180-011721-ff207db72804f196d2066d2931ed850c-1644143944");
-            $accessToken = "APP_USR-3577992641079180-011721-ff207db72804f196d2066d2931ed850c-1644143944";
+            MercadoPagoConfig::setAccessToken(env("MERCADO_PAGO_ACCESS_TOKEN"));
+            $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN");
             
             $customerResponse = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $accessToken,
@@ -207,7 +207,7 @@ class Colaborador extends Component
     
             foreach ($this->barbearia->barbeiros()->withTrashed()->get() as $barbeiro) {
                 try {
-                    $accessToken = "APP_USR-3577992641079180-011721-ff207db72804f196d2066d2931ed850c-1644143944";
+                    $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN");
     
                     if ($barbeiro->payment_method?->value === 'PIX' || $barbeiro->payment_method?->value === 'Boleto') {
                         $response = Http::withToken($accessToken)->get('https://api.mercadopago.com/authorized_payments/search', [

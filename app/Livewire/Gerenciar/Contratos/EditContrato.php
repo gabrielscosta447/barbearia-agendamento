@@ -17,8 +17,8 @@ class EditContrato extends Component
                 $this->barbeiro = BarbeariaUser::where("id",$this->barbeiro->id)->withTrashed()->first();
        }
     public function editarAssinatura($formData,$paymentMethod){
-      $accessToken = "APP_USR-3577992641079180-011721-ff207db72804f196d2066d2931ed850c-1644143944";
-      MercadoPagoConfig::setAccessToken("APP_USR-3577992641079180-011721-ff207db72804f196d2066d2931ed850c-1644143944");
+      $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN");
+      MercadoPagoConfig::setAccessToken(env("MERCADO_PAGO_ACCESS_TOKEN"));
          
           
              if(($this->barbeiro->payment_method->value == "Cartão de Crédito" || $this->barbeiro->payment_method->value == "Cartão de Débito") && ($paymentMethod == "debit_card" || $paymentMethod == "credit_card") ) {
