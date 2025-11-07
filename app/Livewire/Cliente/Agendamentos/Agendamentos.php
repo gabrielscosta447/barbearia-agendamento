@@ -243,7 +243,7 @@ public function agendamentos() {
             return collect(); // Retorna uma coleção vazia se a opção for desconhecida
     }
 
-    return $query;
+    return $query->get();
 }
 
     public function limpar() {

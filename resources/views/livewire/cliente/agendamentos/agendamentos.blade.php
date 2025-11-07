@@ -70,6 +70,7 @@
       @else
         @foreach($this->agendamentos as $agendamento)
           <div
+         
             class="relative flex max-w-[30rem] flex-col overflow-hidden rounded-xl bg-white bg-clip-border text-gray-700 shadow-md"
           >
             <a
@@ -139,10 +140,11 @@
                 @else
                   <x-button
                     class="rounded bg-black px-7 pb-2.5 pt-3 text-sm font-medium uppercase text-white"
-                    wire:click="pay({{ $agendamento->id }})"
+                    wire:navigate.hover
+                   href="/pagar/{{ $agendamento->id }}"
                   >
-                    <span wire:loading.remove wire:target="pay({{ $agendamento->id }})">Pagar</span>
-                    <span wire:loading wire:target="pay({{ $agendamento->id }})">Processando...</span>
+                    <span >Pagar</span>
+                   
                   </x-button>
                 @endif
               @endif
@@ -153,7 +155,7 @@
     </div>
 
     <div class="flex items-center justify-center">
-      {{ $this->agendamentos?->links() }}
+   
     </div>
 
     {{-- 🔹 Modal --}}

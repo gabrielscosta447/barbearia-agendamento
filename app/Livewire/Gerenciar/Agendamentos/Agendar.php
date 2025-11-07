@@ -111,10 +111,10 @@ $this->adicionarMetodos = true;
     $agendamento = Agendamento::withTrashed()->find($agendamento->id);
 
     $firebaseToken = $agendamento->owner?->token;
-    $pvKeyPath = public_path('pvKey.json');
+    $pvKeyPath = env('FIREBASE_CREDENTIALS_JSON');
     $credential = new ServiceAccountCredentials(
        "https://www.googleapis.com/auth/firebase.messaging",
-       json_decode(file_get_contents($pvKeyPath), true)
+       json_decode(env('FIREBASE_CREDENTIALS_JSON'), true)
    );
 
    $token = $credential->fetchAuthToken(HttpHandlerFactory::build());

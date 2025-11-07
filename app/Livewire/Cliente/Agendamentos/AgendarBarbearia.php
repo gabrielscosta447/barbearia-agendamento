@@ -229,7 +229,7 @@ class AgendarBarbearia extends Component
   $agendamentoObj =   $this->saveAgendamento($agendamento, $end_date_clone);
 
      if(!$this->cliente) {
-  $this->redirect('/pagar/'.$agendamentoObj->id);
+
 
      } else {
 
@@ -245,11 +245,15 @@ class AgendarBarbearia extends Component
      }
 
       $barbeiroToken = $this->barbeiroSelecionado->user->token;
-        $pvKeyPath = public_path('pvKey.json');
-        $credential = new ServiceAccountCredentials(
-           "https://www.googleapis.com/auth/firebase.messaging",
-           json_decode(file_get_contents($pvKeyPath), true)
-       );
+     
+      $path = base_path(env('FIREBASE_CREDENTIALS'));
+
+$credentialData = json_decode(file_get_contents($path), true);
+
+$credential = new ServiceAccountCredentials(
+    "https://www.googleapis.com/auth/firebase.messaging",
+    $credentialData
+);
 
        $token = $credential->fetchAuthToken(HttpHandlerFactory::build());
 
@@ -291,6 +295,7 @@ class AgendarBarbearia extends Component
             ]
         ]
     ]);
+   
     } catch(\Exception $e) {
         dd($e);
     }
