@@ -346,7 +346,9 @@ $credential = new ServiceAccountCredentials(
       $total += $corteSelecionado->preco;
 
     }
-$totalFormatado = number_format($total, 2, '.', '');
+    $totalPagar = $total * 0.30;
+    $totalFormatado = number_format($totalPagar, 2, '.', '');
+
    $bancoDoBrasilService = new BancoDoBrasilService();
    $response = $bancoDoBrasilService->criarPagamentoPix($totalFormatado);
     $agendamento->id_pix = $response['txid'];
