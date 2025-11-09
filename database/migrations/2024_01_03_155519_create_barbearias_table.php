@@ -41,7 +41,7 @@ return new class extends Migration
             $table->string("complemento");
             $table->json("redes_sociais")->nullable();
             $table->string("slug")->unique();
-            $table->string("CPF")->unique();
+            $table->string("cpf")->unique();
             $table->json('galeria')->nullable();
             $table->unsignedBigInteger("owner_id");
             $table->timestamps();

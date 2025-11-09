@@ -66,7 +66,7 @@ Route::get('/byebye', [MercadoPago::class, 'index']);
 Route::get('/criar-plano', [MercadoPago::class, 'criar']);
 Route::get('/pagar/{id}', PagarAgendamento::class);
 
-Route::get('/instagram', [InstagramController::class, 'instagram']);
+
 Route::get('/mercadopagoprecos',[MercadoPago::class, 'atualizarPrecos']);
 
 

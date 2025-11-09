@@ -100,6 +100,7 @@ class BancoDoBrasilService
 
         return $response->json();
     }
-       
+ 
+   
  
 }

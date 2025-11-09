@@ -161,7 +161,7 @@ if($paymentMethod === 'debit_card' || $paymentMethod === 'credit_card' ) {
 
          'payer_email'=> auth()->user()->email,
 
-          'card_token_id' => $formData['token'],
+           'card_token_id' => $formData['token'], 
 
 
         'external_reference' => $barbearia_user->id
@@ -175,7 +175,7 @@ if($paymentMethod === 'debit_card' || $paymentMethod === 'credit_card' ) {
 
     try {
         $assinatura = $client->create($preapprovalData);
-
+      
         // Faça algo com a assinatura criada, como salvar no banco de dados ou retornar uma resposta para o usuário
     } catch (\Exception $e) {
            dd($e);
@@ -222,6 +222,7 @@ if($paymentMethod === 'debit_card' || $paymentMethod === 'credit_card' ) {
 
 
 } else {
+
     $preferenceID = '1644143944-27896130-0574-4b9f-a031-653b4a6349ff';
 
     $response = Http::withHeaders([
