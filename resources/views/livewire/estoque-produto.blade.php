@@ -381,7 +381,7 @@
                             </td>
                             <td class="py-2">
                                 <div class="flex justify-center">
-                                    <img src="http://localhost:8000/{{ $produto->imagem }}" data-te-img="http://localhost:8000/{{ $produto->imagem }}" class="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-20 object-cover transition duration-300 ease-linear mr-2" />
+                                    <img src="{{ asset($produto->imagem) }}" data-te-img="{{ asset($produto->imagem) }}" class="w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-20 object-cover transition duration-300 ease-linear mr-2" />
                                 </div>
                             </td>
                             <td class="flex items-center px-2 py-2">
