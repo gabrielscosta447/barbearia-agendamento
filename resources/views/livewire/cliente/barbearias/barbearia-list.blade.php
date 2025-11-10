@@ -5,41 +5,24 @@
       <div class="text-left">
         <h1 class="mr-6 text-2xl lg:text-4xl font-bold tracking-tight text-gray-900">Barbearias</h1>
       </div>
-      <div class="text-right flex items-center gap-4">
-        <x-input wire:model.live="search" placeholder="Buscar" />
-      </div>
+<div class="flex flex-col lg:flex-row gap-2 lg:gap-4 w-full lg:w-1/4 items-start lg:items-center">
+  <x-input 
+    wire:model.live="search" 
+    placeholder="Buscar por nome ou cidade" 
+    class="w-full lg:w-auto"
+  />
+  <x-select
+    wire:model.live="distancia"
+    placeholder="Selecione a distância"
+    option-value="id"
+    option-label="name"
+    :options="$this->opcoesDistancia"
+    class="w-full lg:w-auto"
+  />
+</div>
     </div>
   </div>
-  {{--   <div class="mb-3 ml-auto mr-3 mt-10">
-        <div class="relative mb-4 flex w-full flex-wrap justify-end  items-stretch">
-          <input
-            type="search"
-            class="relative m-0 -mr-0.5 block min-w-0  rounded-l border border-solid border-neutral-300 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:focus:border-primary"
-            placeholder="Buscar"
-            wire:model.live="search"
-            aria-label="Search"
-            aria-describedby="button-addon1" />
-
-          <!--Search button-->
-          <button
-            class="relative z-[2] flex items-center rounded-r bg-primary px-6 py-2.5 text-xs font-medium uppercase leading-tight text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-800 active:shadow-lg"
-            type="button"
-            id="button-addon1"
-            data-te-ripple-init
-            data-te-ripple-color="light">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-              class="h-5 w-5">
-              <path
-                fill-rule="evenodd"
-                d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                clip-rule="evenodd" />
-            </svg>
-          </button>
-        </div>
-      </div> --}}
+  
       <style>
 
 .imagem {
@@ -93,7 +76,7 @@
       </svg>
     </button>
       <img
-      src="http://localhost:8000/storage/{{ $barbearia->imagem }}"
+      src="/storage/{{ $barbearia->imagem }}"
       class=" w-full h-[350px] object-cover"
 
         alt="ui/ux review check" />
@@ -169,6 +152,9 @@ fill="none"
       </div>
       <p class="block font-semibold text-lg antialiased  leading-relaxed text-inherit">
         Rua: {{ $barbearia->rua }}
+      </p>
+      <p class="block font-sans text-lg antialiased font-semibold leading-relaxed text-inherit">
+        Bairro: {{ $barbearia->bairro }}
       </p>
       <p class="block font-sans text-lg antialiased font-semibold leading-relaxed text-inherit">
         Cidade: {{ $barbearia->cidade }}
@@ -389,6 +375,44 @@ fill="none"
 </div>
 
   </div>
+  @script
+<script>
+document.addEventListener('livewire:navigated', function () {
+      console.log("📍 Script Livewire carregado!");
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+            const component = window.Livewire.find(@this.id); // @this.id pega o id do componente atual
+                if(component) {
+                      component.dispatch('setLocation',{ lat: position.coords.latitude, lng: position.coords.longitude });
+                    console.log("📍 Localização enviada:", position.coords.latitude, position.coords.longitude);
+                } else {
+                    console.error("❌ Componente Livewire não encontrado");
+                }
 
+            },
+            function (error) {
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        alert("Você negou o acesso à sua localização.");
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        alert("Informações de localização indisponíveis.");
+                        break;
+                    case error.TIMEOUT:
+                        alert("Tempo limite para obter localização expirou.");
+                        break;
+                    default:
+                        alert("Ocorreu um erro desconhecido ao obter sua localização.");
+                        break;
+                }
+            }
+        );
+    } else {
+        alert("Seu navegador não suporta geolocalização.");
+    }
+});
+</script>
+@endscript
 
 </div>

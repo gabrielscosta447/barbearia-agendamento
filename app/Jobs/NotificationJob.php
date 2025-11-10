@@ -42,12 +42,14 @@ class NotificationJob implements ShouldQueue
 
                 if ($start_date->diffInMinutes($now) == 60) {
                     $firebaseToken = $agendamento->owner->token;
+   $path = base_path(env('FIREBASE_CREDENTIALS'));
+                   $credentialData = json_decode(file_get_contents($path), true);
 
-                    $pvKeyPath = env('FIREBASE_CREDENTIALS_JSON');
-                    $credential = new ServiceAccountCredentials(
-                        "https://www.googleapis.com/auth/firebase.messaging",
-                        json_decode(env('FIREBASE_CREDENTIALS_JSON'), true)
-                    );
+$credential = new ServiceAccountCredentials(
+    "https://www.googleapis.com/auth/firebase.messaging",
+    $credentialData
+);
+
 
                     $token = $credential->fetchAuthToken(HttpHandlerFactory::build());
 
@@ -62,11 +64,11 @@ class NotificationJob implements ShouldQueue
                             "notification" => [
                                 "title" => "Falta uma Hora para o seu agendamento!",
                                 "body" => "Data: " . $start_date_formatted,
-                                "image" => "http://localhost:8000/" . $agendamento->colaborador->barbearia->imagem
+                                "image" => env("APP_URL") . '/storage/' . $agendamento->colaborador->barbearia->imagem
                             ],
                             "webpush" => [
                                 "fcm_options" => [
-                                    "link" => "http://localhost:8000/home?tab=pills-contact8"
+                                    "link" => env("APP_URL") . "home?tab=pills-contact8"
                                 ]
                             ]
                         ]

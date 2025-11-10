@@ -130,11 +130,11 @@ $this->adicionarMetodos = true;
             "notification" => [
                 "title" => "Seu agendamento para " . $agendamento->start_date->format('d/m/Y H:i') . ", foi concluído com sucesso.",
                 "body" => "Concluído às: ". ($agendamento->deleted_at ? $agendamento->deleted_at->format('d/m/Y H:i') : 'Não disponível'),
-                "image" => "http://localhost:8000/storage/" . $agendamento->colaborador->barbearia->imagem
+                "image" => env("APP_URL") . "/storage/" . $agendamento->colaborador->barbearia->imagem
             ],
             "webpush" => [
                 "fcm_options" => [
-                    "link" => "http://localhost:8000/home?tab=pills-contact8"
+                    "link" => env("APP_URL") . "/home?tab=pills-contact8"
                 ]
             ]
         ]

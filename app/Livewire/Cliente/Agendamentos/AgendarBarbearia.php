@@ -267,11 +267,11 @@ $credential = new ServiceAccountCredentials(
                "notification" => [
                    "title" => "Agendamento criado com sucesso.",
                    "body" => "Data: ". $agendamento->start_date->format('d/m/Y H:i'),
-                   "image" => "http://localhost:8000/storage/" . $this->barbeiroSelecionado->barbearia->imagem
+                   "image" => env("APP_URL") . '/storage/' . $this->barbeiroSelecionado->barbearia->imagem
                ],
                "webpush" => [
                    "fcm_options" => [
-                       "link" => "http://localhost:8000/home?tab=pills-contact8"
+                       "link" => env("APP_URL") . "home?tab=pills-contact8"
                    ]
                ]
            ]

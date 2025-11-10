@@ -81,7 +81,7 @@
               class="relative m-0 overflow-hidden text-gray-700 bg-transparent rounded-none shadow-none bg-clip-border"
             >
               <img
-                src="http://localhost:8000/storage/{{ $agendamento->colaborador->barbearia->imagem }}"
+                src="/storage/{{ $agendamento->colaborador->barbearia->imagem }}"
                 class="w-full h-[317px] object-cover"
                 alt="Imagem da barbearia"
               />

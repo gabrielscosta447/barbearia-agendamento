@@ -38,6 +38,9 @@ return new class extends Migration
             $table->string("rua");
             $table->string("estado");
             $table->string("cidade");
+            $table->string("bairro");
+            $table->string("latitude")->nullable();
+            $table->string("longitude")->nullable();
             $table->string("complemento");
             $table->json("redes_sociais")->nullable();
             $table->string("slug")->unique();

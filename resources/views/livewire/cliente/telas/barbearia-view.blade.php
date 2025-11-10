@@ -175,7 +175,7 @@
 x-intersect="shownHome = true;"
     x-intersect:leave="shownHome =  false"
     style="
-      background-image: url('http://localhost:8000/6c082904e4c74374b352ad53b2b2a8be (1) (1).png');
+      background-image: url('/6c082904e4c74374b352ad53b2b2a8be (1) (1).png');
       height: 850px;
 
 
@@ -310,7 +310,7 @@ class="flex flex-col space-y-5 lg:flex-row lg:space-x-5 lg:space-y-0">
     @if(isset($galeria['media_url']))
         <img src="{{ $galeria['media_url'] }}" data-te-caption="{{ $galeria['caption'] }}" data-te-img="{{ $galeria['media_url'] }}" class="w-[400px] h-[200px] object-cover align-middle transition duration-300 ease-linear" />
     @else
-        <img src="http://localhost:8000/storage/{{ $galeria['foto'] }}" data-te-caption="{{ $galeria['descricao'] }}" data-te-img="http://localhost:8000/storage/{{ $galeria['foto'] }}" class="w-[400px] max-h-[400px]   xl:min-h-[350px] lg:min-h-[250px]  object-cover align-middle transition duration-300 ease-linear" />
+        <img src="/storage/{{ $galeria['foto'] }}" data-te-caption="{{ $galeria['descricao'] }}" data-te-img="/storage/{{ $galeria['foto'] }}" class="w-[400px] max-h-[400px]   xl:min-h-[350px] lg:min-h-[250px]  object-cover align-middle transition duration-300 ease-linear" />
     @endif
 </div>
 @endforeach
@@ -382,7 +382,7 @@ Galeria Completa
               <img  src="{{ $galeria['media_url'] }}"   data-te-caption="{{ $galeria['caption'] }}" data-te-img="{{ $galeria['media_url'] }}" class="w-[400px]  object-cover align-middle transition duration-300 ease-linear" />
               @else
 
-              <img  src="http://localhost:8000/storage/{{ $galeria['foto'] }}"   data-te-caption="{{ $galeria['descricao'] }}" data-te-img="http://localhost:8000/storage/{{ $galeria['foto'] }}" class="w-full max-h-[200px]    object-cover align-middle transition duration-300 ease-linear" />
+              <img  src="/storage/{{ $galeria['foto'] }}"   data-te-caption="{{ $galeria['descricao'] }}" data-te-img="/storage/{{ $galeria['foto'] }}" class="w-full max-h-[200px]    object-cover align-middle transition duration-300 ease-linear" />
               @endif
           </div>
        @endforeach
@@ -399,7 +399,7 @@ Galeria Completa
       class="block rounded-lg bg-white shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700">
       <div class="flex flex-wrap items-center">
         <div class="block w-full shrink-0 grow-0 basis-auto lg:flex lg:w-6/12 xl:w-4/12">
-          <img src="http://localhost:8000/storage/{{ $barbearia->imagem }}" alt="Trendy Pants and Shoes"
+          <img src="/storage/{{ $barbearia->imagem }}" alt="Trendy Pants and Shoes"
             class="w-full h-[400px] object-cover  rounded-t-lg lg:rounded-tr-none lg:rounded-bl-lg" />
         </div>
         <div class="w-full shrink-0 grow-0 basis-auto lg:w-6/12 xl:w-8/12">
