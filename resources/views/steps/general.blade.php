@@ -41,7 +41,7 @@ role="alert">
     <input type="text" class="peer py-3 pe-0  block w-full bg-transparent border-t-transparent border-b-2 border-x-transparent border-b-gray-200 text-xl focus:border-t-transparent focus:border-x-transparent focus:border-b-black focus:ring-0 disabled:opacity-50 disabled:pointer-events-none" placeholder="URL" wire:model="state.slug">
 <script>
 
-      document.addEventListener('livewire:load', function () {
+      document.addEventListener('livewire:navigated', function () {
     const cepInput = document.querySelector('input[placeholder="CEP"]');
     const cnpjCpfInput = document.querySelector('input[placeholder="CPF/CNPJ"]');
 
