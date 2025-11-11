@@ -267,7 +267,7 @@ $credential = new ServiceAccountCredentials(
                "notification" => [
                    "title" => "Agendamento criado com sucesso.",
                    "body" => "Data: ". $agendamento->start_date->format('d/m/Y H:i'),
-                   "image" => env("APP_URL") . '/storage/' . $this->barbeiroSelecionado->barbearia->imagem
+                   "image" => env("APP_URL") . 'storage/' . $this->barbeiroSelecionado->barbearia->imagem
                ],
                "webpush" => [
                    "fcm_options" => [
@@ -286,11 +286,11 @@ $credential = new ServiceAccountCredentials(
             "notification" => [
                 "title" => "Um novo agendamento foi criado para você.",
                 "body" => "Data: ". $agendamento->start_date->format('d/m/Y H:i'),
-                "image" => "http://localhost:8000/storage/" . $this->barbeiroSelecionado->barbearia->imagem
+                   "image" => env("APP_URL") . 'storage/' . $this->barbeiroSelecionado->barbearia->imagem
             ],
             "webpush" => [
                 "fcm_options" => [
-                    "link" => "http://localhost:8000/gerenciar/{$this->barbeiroSelecionado->barbearia->slug}/agendamentos"
+                    "link" => env("APP_URL") . "gerenciar/{$this->barbeiroSelecionado->barbearia->slug}/agendamentos"
                 ]
             ]
         ]
