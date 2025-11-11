@@ -39,6 +39,53 @@ role="alert">
     <input type="text" class="peer py-3 pe-0  block w-full bg-transparent border-t-transparent border-b-2 border-x-transparent border-b-gray-200 text-xl focus:border-t-transparent focus:border-x-transparent focus:border-b-black focus:ring-0 disabled:opacity-50 disabled:pointer-events-none" placeholder="Estado" wire:model="state.estado">
 
     <input type="text" class="peer py-3 pe-0  block w-full bg-transparent border-t-transparent border-b-2 border-x-transparent border-b-gray-200 text-xl focus:border-t-transparent focus:border-x-transparent focus:border-b-black focus:ring-0 disabled:opacity-50 disabled:pointer-events-none" placeholder="URL" wire:model="state.slug">
+<script>
 
+      document.addEventListener('livewire:load', function () {
+    const cepInput = document.querySelector('input[placeholder="CEP"]');
+    const cnpjCpfInput = document.querySelector('input[placeholder="CPF/CNPJ"]');
+
+    cnpjCpfInput.addEventListener('input', function () {
+       
+        let value = cnpjCpfInput.value.replace(/\D/g, '');
+
+        
+        if (value.length > 14) {
+            value = value.slice(0, 14);
+        }
+
+        
+        if (value.length > 11) {
+            value = value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2})/, '$1.$2.$3/$4-$5');
+        } else {
+            value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+        }
+
+        cnpjCpfInput.value = value;
+    });
+       cepInput.addEventListener('input', function () {
+       
+        let cep = cepInput.value.replace(/\D/g, '');
+
+        
+        if (cep.length > 8) {
+            cep = cep.slice(0, 8);
+        }
+
+  
+        if (cep.length > 5) {
+            cep = cep.replace(/(\d{5})(\d{1,3})/, '$1-$2');
+        }
+
+        cepInput.value = cep;
+    });
+
+           
+
+     
+
+    });
+
+</script>
 
 </div>
