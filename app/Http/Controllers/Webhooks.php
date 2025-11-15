@@ -133,23 +133,40 @@ public function webhookASAAS(Request $request)
             return response()->json(['error' => 'BarbeariaUser not found'], 404);
         }
 
+   
+
         // 🔵 Assinatura paga
-        if ($event === "PAYMENT_RECEIVED" && $status === "RECEIVED") {
-            $barbearia->assinatura_id = $payment['subscription'];
-            $barbearia->plan_ends_at = now()->addMonth();
-            $barbearoa->asaas_payment_url = null;
-            $barbearia->restore();
-            $barbearia->save();
+       if (
+    ($event === "PAYMENT_RECEIVED" && $status === "RECEIVED") ||
+    ($event === "PAYMENT_CONFIRMED" && $status === "CONFIRMED")
+) {
+    $barbearia->assinatura_id = $payment['subscription'];
+    $barbearia->plan_ends_at = now()->addMonth();
+    $barbearia->asaas_payment_url = null;
+    $barbearia->restore();
+    $barbearia->save();
 
-            Log::info("Assinatura ASAAS renovada", ['id' => $barbearia->id]);
+    Log::info("Assinatura ASAAS renovada via CARTÃO ou PIX", [
+        'id' => $barbearia->id
+    ]);
 
-            return response()->json(['success' => true]);
-        }
+    return response()->json(['success' => true]);
+}
 
         // 🔴 Assinatura VENCIDA ou CANCELADA
         if ($status === "OVERDUE" || $status === "CANCELLED") {
+ $token = env('PIX_ACCESS_TOKEN');
+        $baseUrl = env('PIX_BASE_URL');
 
-            $barbearia->assinatura_id = null;
+ 
+        $resp = Http::withHeaders([
+        'accept' => 'application/json',
+        'content-type' => 'application/json',
+        'access_token' => $token,
+    ])->put("{$baseUrl}/subscriptions/{$barbearia->assinatura_id}", [
+        'status' => 'INACTIVE'
+    ]);
+          
             $barbearia->payment_method = null;
             $barbearia->delete();
 
@@ -184,7 +201,7 @@ public function webhookASAAS(Request $request)
         $agendamento->save();
 
         $valorRecebido = $payment['value'];
-        $pixDestino = '12991732260'; // <<< personalize aqui
+        $pixDestino = $agendamento->colaborador->chave_pix; // <<< personalize aqui
 
         Log::info("Pagamento confirmado. Iniciando transferência PIX...");
 
@@ -196,7 +213,7 @@ public function webhookASAAS(Request $request)
             'value' => $valorRecebido,
             'operationType' => 'PIX',
             'pixAddressKey' => $pixDestino,
-            'pixAddressKeyType' => 'PHONE',
+            'pixAddressKeyType' => $agendamento->colaborador->tipo_chave,
         ]);
 
         Log::info("Transfer ASAAS Response", ['body' => $response->json()]);

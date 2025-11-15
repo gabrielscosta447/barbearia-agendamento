@@ -17,6 +17,7 @@ class PagarAgendamento extends Component
         $this->agendamento = Agendamento::find($id);
   
         $this->qrCodePix = $this->agendamento->id_pix;
+        $this->pixCopiaECola = $this->agendamento->payload;
     
     }
    

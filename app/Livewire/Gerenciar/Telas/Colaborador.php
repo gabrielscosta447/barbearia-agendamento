@@ -26,6 +26,7 @@ class Colaborador extends Component
     public function mount($slug)
     {
         $this->barbearia = Barbearia::where('slug', $slug)->firstOrFail();
+       
         $this->carregarAssinaturas();
         $this->carregarFaturasCacheadas();
     }
@@ -47,9 +48,10 @@ class Colaborador extends Component
                         'accept' => 'application/json',
                         'access_token' => $token,
                     ])->get("{$baseUrl}/subscriptions/{$barbeiro->assinatura_id}");
-
+             
                     if ($resp->successful()) {
                         $dados = $resp->json();
+                        
                         $this->assinaturas[$barbeiro->id] = $dados;
                     } else {
                         // limpar campo se subscription inexistente
@@ -68,68 +70,69 @@ class Colaborador extends Component
     /**
      * Carrega faturas (payments) de todas assinaturas e agrupa em $this->faturas
      */
-    public function carregarFaturasCacheadas()
-    {
-        $cacheKey = 'faturas_barbearia_' . $this->barbearia->id;
+   public function carregarFaturasCacheadas()
+{
+    // Removido o uso de cache completamente
+    $this->faturas = (function () {
+        $all = [];
+        $token = env('PIX_ACCESS_TOKEN');
+        $baseUrl = 'https://api-sandbox.asaas.com/v3';
 
-        $this->faturas = Cache::remember($cacheKey, now()->addMinutes(10), function () {
-            $all = [];
-            $token = env('PIX_ACCESS_TOKEN');
-            $baseUrl = 'https://api-sandbox.asaas.com/v3';
+        foreach ($this->barbearia->barbeiros()->withTrashed()->get() as $barbeiro) {
 
-            foreach ($this->barbearia->barbeiros()->withTrashed()->get() as $barbeiro) {
-                // 1) se tem assinatura, buscar payments da assinatura
-                if ($barbeiro->assinatura_id) {
-                    try {
-                        $resp = Http::withHeaders([
-                            'accept' => 'application/json',
-                            'access_token' => $token,
-                        ])->get("{$baseUrl}/payments", [
-                            'subscription' => $barbeiro->assinatura_id,
-                            'limit' => 50
-                        ]);
+            // 1) Payments da assinatura (se existir)
+            if ($barbeiro->assinatura_id) {
+                try {
+                    $resp = Http::withHeaders([
+                        'accept' => 'application/json',
+                        'access_token' => $token,
+                    ])->get("{$baseUrl}/payments", [
+                        'subscription' => $barbeiro->assinatura_id,
+                        'limit' => 50
+                    ]);
 
-                        if ($resp->successful()) {
-                            $data = $resp->json('data') ?? [];
-                            foreach ($data as $p) {
-                                $p['barbearia_user_id'] = $barbeiro->id;
-                                $all[] = $p;
-                            }
-                        }
-                    } catch (\Exception $e) {
-                        \Log::error('Erro ao buscar payments Asaas: ' . $e->getMessage());
-                    }
-                }
+                    if ($resp->successful()) {
+                        $data = $resp->json('data') ?? [];
 
-                // 2) se tem payment avulso salvo (payment_id), buscar esse payment
-                if ($barbeiro->payment_id) {
-                    try {
-                        $resp = Http::withHeaders([
-                            'accept' => 'application/json',
-                            'access_token' => $token,
-                        ])->get("{$baseUrl}/payments/{$barbeiro->payment_id}");
-
-                        if ($resp->successful()) {
-                            $p = $resp->json();
+                        foreach ($data as $p) {
                             $p['barbearia_user_id'] = $barbeiro->id;
                             $all[] = $p;
                         }
-                    } catch (\Exception $e) {
-                        \Log::error('Erro ao buscar payment id Asaas: ' . $e->getMessage());
                     }
+                } catch (\Exception $e) {
+                    \Log::error('Erro ao buscar payments Asaas: ' . $e->getMessage());
                 }
             }
 
-            // ordenar por data (decrescente)
-            usort($all, function ($a, $b) {
-                $da = $a['dateCreated'] ?? ($a['debitDate'] ?? null);
-                $db = $b['dateCreated'] ?? ($b['debitDate'] ?? null);
-                return strtotime($db) <=> strtotime($da);
-            });
+            // 2) Payment avulso se houver payment_id
+            if ($barbeiro->payment_id) {
+                try {
+                    $resp = Http::withHeaders([
+                        'accept' => 'application/json',
+                        'access_token' => $token,
+                    ])->get("{$baseUrl}/payments/{$barbeiro->payment_id}");
 
-            return $all;
+                    if ($resp->successful()) {
+                        $p = $resp->json();
+                        $p['barbearia_user_id'] = $barbeiro->id;
+                        $all[] = $p;
+                    }
+                } catch (\Exception $e) {
+                    \Log::error('Erro ao buscar payment id Asaas: ' . $e->getMessage());
+                }
+            }
+        }
+
+        // ordenar por data (decrescente)
+        usort($all, function ($a, $b) {
+            $da = $a['dateCreated'] ?? ($a['debitDate'] ?? null);
+            $db = $b['dateCreated'] ?? ($b['debitDate'] ?? null);
+            return strtotime($db) <=> strtotime($da);
         });
-    }
+
+        return $all;
+    })();
+}
 
     /**
      * Criar assinatura no Asaas para um BarbeariaUser
@@ -197,6 +200,83 @@ class Colaborador extends Component
         $this->loading = false;
     }
 
+    public function reativarAssinatura($barbeariaUserId)
+{
+    $barbeiro = BarbeariaUser::withTrashed()->find($barbeariaUserId);
+    if (!$barbeiro || !$barbeiro->assinatura_id) {
+        $this->dispatchBrowserEvent('notify', ['type' => 'error', 'message' => 'Assinatura não encontrada.']);
+        return;
+    }
+
+    $token = env('PIX_ACCESS_TOKEN');
+    $baseUrl = 'https://api-sandbox.asaas.com/v3';
+
+   $resp = Http::withHeaders([
+            'accept' => 'application/json',
+            'content-type' => 'application/json',
+            'access_token' => $token,
+        ])->get("{$baseUrl}/payments", [
+            'subscription' => $barbeiro->assinatura_id,
+            'status'       => 'OVERDUE',
+            'limit'        => 50
+        ]);
+ if ($resp->json('totalCount') > 0) {
+    session()->flash('error', 'Existem faturas vencidas. Regularize antes de reativar a assinatura.');
+    return;
+}
+    try {
+
+   
+
+        $resp = Http::withHeaders([
+            'accept' => 'application/json',
+            'content-type' => 'application/json',
+            'access_token' => $token,
+        ])->put("{$baseUrl}/subscriptions/{$barbeiro->assinatura_id}", [
+            'status' => 'ACTIVE',
+            
+        ]);
+
+
+
+        if ($resp->successful()) {
+
+            // restaurar o barbeiro (caso esteja deletado)
+            $barbeiro->restore();
+
+        
+    
+            $barbeiro->save();
+
+   
+            $this->carregarAssinaturas();
+       
+
+            $this->dispatch('notify', [
+                'type' => 'success',
+                'message' => 'Assinatura reativada com sucesso.'
+            ]);
+        } else {
+
+            \Log::error('Erro reativar assinatura Asaas', ['body' => $resp->body()]);
+
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Falha ao reativar assinatura.'
+            ]);
+        }
+
+    } catch (\Exception $e) {
+
+        \Log::error('Exception reativarAssinatura: ' . $e->getMessage());
+
+        $this->dispatch('notify', [
+            'type' => 'error',
+            'message' => 'Erro de comunicação Asaas.'
+        ]);
+    }
+}
+
     /**
      * Cancelar assinatura (ou pausar) via Asaas
      */
@@ -208,34 +288,34 @@ class Colaborador extends Component
             return;
         }
 
-        $token = env('ASAAS_ACCESS_TOKEN');
+        $token = env('PIX_ACCESS_TOKEN');
         $baseUrl = 'https://api-sandbox.asaas.com/v3';
 
         try {
-            $resp = Http::withHeaders([
-                'accept' => 'application/json',
-                'content-type' => 'application/json',
-                'access_token' => $token,
-            ])->put("{$baseUrl}/subscriptions/{$barbeiro->assinatura_id}", [
-                'status' => 'cancelled'
-            ]);
+        $resp = Http::withHeaders([
+        'accept' => 'application/json',
+        'content-type' => 'application/json',
+        'access_token' => $token,
+    ])->put("{$baseUrl}/subscriptions/{$barbeiro->assinatura_id}", [
+        'status' => 'INACTIVE'
+    ]);
+
 
             if ($resp->successful()) {
-                $barbeiro->payment_method = null;
-                $barbeiro->assinatura_id = null;
+               $barbeiro->delete();
                 $barbeiro->save();
-                $barbeiro->delete(); // suspende
+               
                 Cache::forget('faturas_barbearia_' . $this->barbearia->id);
                 $this->carregarAssinaturas();
                 $this->carregarFaturasCacheadas();
-                $this->dispatchBrowserEvent('notify', ['type' => 'success', 'message' => 'Assinatura cancelada.']);
+                $this->dispatch('notify', ['type' => 'success', 'message' => 'Assinatura cancelada.']);
             } else {
                 \Log::error('Erro cancelar assinatura Asaas', ['body' => $resp->body()]);
-                $this->dispatchBrowserEvent('notify', ['type' => 'error', 'message' => 'Falha ao cancelar assinatura.']);
+                $this->dispatch('notify', ['type' => 'error', 'message' => 'Falha ao cancelar assinatura.']);
             }
         } catch (\Exception $e) {
             \Log::error('Exception cancelarAssinatura: ' . $e->getMessage());
-            $this->dispatchBrowserEvent('notify', ['type' => 'error', 'message' => 'Erro de comunicação Asaas.']);
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Erro de comunicação Asaas.']);
         }
     }
 

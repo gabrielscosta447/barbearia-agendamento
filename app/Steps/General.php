@@ -75,6 +75,8 @@ class General extends Step
                 'state.rua' => ['required', 'string'],
                 'state.slug' => ['required', 'string', 'unique:barbearias,slug'],
                 'state.cep' => ['required', 'string'],
+                'state.tipo_chave' => ['required', 'string'],
+                'state.chave_pix' => ['required', 'string'],
             
             ],
             [],
@@ -87,7 +89,9 @@ class General extends Step
                 'state.rua' => __('Rua'),
                 'state.slug' => __('URL'),
                 'state.cidade' => __('Cidade'),
-                'state.cep' => __('CEP')
+                'state.cep' => __('CEP'),
+                'state.tipo_chave' => __('Tipo de Chave Pix'),
+                'state.chave_pix' => __('Chave Pix')
             ],
         ];
     }

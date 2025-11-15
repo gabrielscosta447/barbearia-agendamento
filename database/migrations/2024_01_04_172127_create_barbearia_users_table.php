@@ -35,8 +35,12 @@ return new class extends Migration
             $table->enum('price', $planTypeValues)->nullable(); // Usando array_values()
             $table->timestamp('plan_ends_at')->nullable();
             $table->time('interval')->default('01:00:00');
+            $table->string('asaas_payment_url')->nullable();
+            $table->string('asaas_customer_id')->nullable();
             $table->time('antecedence_time')->default('01:00:00');
             $table->datetime('maxDate')->nullable();
+            $table->string('chave_pix')->nullable();
+            $table->string('tipo_chave')->nullable();
             $table->unsignedBigInteger("user_id");
             $table->softDeletes();
             $table->foreign('barbearia_id')->references('id')->on('barbearias')->onDelete("cascade");

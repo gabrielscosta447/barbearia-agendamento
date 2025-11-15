@@ -24,11 +24,11 @@ class BancoDoBrasilService
 
         $formData = [
             "addressKey" => $chavePix,
-        
+            "value" => number_format($valor, 2, '.', ''),
             "externalReference" => $agendamentoId
         ];
 
-
+       
         $response = Http::withHeaders([
             'accept' => 'application/json',
             'access_token' =>  $this->access_token,

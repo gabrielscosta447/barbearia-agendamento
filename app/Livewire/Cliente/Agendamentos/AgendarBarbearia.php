@@ -358,6 +358,7 @@ $credential = new ServiceAccountCredentials(
    
     $agendamento->update([
     'id_pix' => $response['encodedImage'] ?? null,
+    'payload' => $response['payload'] ?? null,
 ]);
 
  

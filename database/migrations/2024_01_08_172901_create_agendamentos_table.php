@@ -24,6 +24,8 @@ return new class extends Migration
             $table->string("payment_method")->nullable();
             $table->boolean("pago")->default(0);
             $table->string("id_pix")->nullable();
+            $table->text("qrcode")->nullable();
+            $table->text("payload")->nullable();
             $table->dateTime("start_date");
             $table->dateTime("end_date");
             $table->softDeletes();

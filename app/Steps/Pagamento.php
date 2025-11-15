@@ -45,6 +45,7 @@ class Pagamento extends Step
         $barbearia->slug = $state['slug'];
         $barbearia->cpf = $state['cpf'];
         $barbearia->bairro = $state['bairro'];
+     
 
         // Busca latitude/longitude via ViaCEP + OSRM
         $cep = preg_replace('/[^0-9]/', '', $state['cep']);
@@ -99,6 +100,8 @@ class Pagamento extends Step
       
         $barbearia_user->barbearia_id = $barbearia->id;
         $barbearia_user->price = 30;
+        $barbearia_user->chave_pix = $state['chave_pix'];
+        $barbearia_user->tipo_chave = $state['tipo_chave'];
         $barbearia_user->save();
     
 
@@ -136,39 +139,104 @@ class Pagamento extends Step
             }
         }
 
-        // ===============================
-        // 5) ASAAS - CRIA ASSINATURA (paymentLink)
-        // ===============================
-        $asaasToken = env('PIX_ACCESS_TOKEN');
+      // ===============================
+// 5) ASAAS - CRIAR CLIENTE
+// ===============================
+$asaasToken = env('PIX_ACCESS_TOKEN');
 
-        $asaasResponse = Http::withHeaders([
-            'accept' => 'application/json',
-            'access_token' => $asaasToken,
-            'content-type' => 'application/json'
-        ])->post(env("PIX_BASE_URL") . "paymentLinks", [
-            "billingType" => "UNDEFINED",
-            "chargeType" => "RECURRENT",
-            "name" => "BarberConnect - Assinatura",
-            "description" => "Assinatura",
-            "value" => 30,
-            "dueDateLimitDays" => 3,
-            "externalReference" => (string) $barbearia_user->id,
-            "notificationEnabled" => true
-        ]);
+$clienteResponse = Http::withHeaders([
+    'accept' => 'application/json',
+    'access_token' => $asaasToken,
+    'content-type' => 'application/json'
+])->post(env("PIX_BASE_URL") . "customers", [
+    "name" => auth()->user()->name,
+    "email" => auth()->user()->email,
+   
+    "cpfCnpj" => preg_replace('/\D/' , '', $state['cpf']),
+    "externalReference" => auth()->user()->id
+]);
 
-        if ($asaasResponse->failed()) {
-            dd($asaasResponse->json());
-        }
+if ($clienteResponse->failed()) {
+    dd("Erro ao criar cliente ASAAS", $clienteResponse->json());
+}
 
-        $paymentLinkUrl = $asaasResponse->json()['url'];
+$clienteId = $clienteResponse->json()['id'];
 
-        // Salva link
-        $barbearia_user->asaas_payment_url = $paymentLinkUrl;
-        $barbearia_user->save();
-        $barbearia_user->delete();
 
-        // retorna usuário para página de pagamento ASAAS
-        return redirect()->away($paymentLinkUrl);
+// ===============================
+// 6) ASAAS - CRIAR ASSINATURA
+// ===============================
+$assinaturaResponse = Http::withHeaders([
+    'accept' => 'application/json',
+    'access_token' => $asaasToken,
+    'content-type' => 'application/json'
+])->post(env("PIX_BASE_URL") . "subscriptions", [
+    "customer" => $clienteId,
+    "billingType" => "UNDEFINED",
+    "value" => 30,
+    "cycle" => "MONTHLY",
+    "nextDueDate" => \Carbon\Carbon::now()->format('Y-m-d'),
+    "description" => "Assinatura BarberConnect",
+    "externalReference" => (string) $barbearia_user->id,
+    "callback" =>[
+        "success" => env('APP_URL') . "/gerenciar/" . $barbearia->slug. "/billing" ,
+    ]
+
+]);
+
+if ($assinaturaResponse->failed()) {
+    dd("Erro ao criar assinatura ASAAS", $assinaturaResponse->json());
+}
+
+$subscriptionId = $assinaturaResponse->json()['id'];
+
+
+// ===============================
+// 7) ASAAS - BUSCAR PAGAMENTOS GERADOS PELA ASSINATURA
+// ===============================
+$paymentsResponse = Http::withHeaders([
+    'accept' => 'application/json',
+    'access_token' => $asaasToken,
+])->get(env("PIX_BASE_URL") . "payments", [
+    "subscription" => $subscriptionId
+]);
+
+if ($paymentsResponse->failed()) {
+    dd("Erro ao buscar pagamentos da assinatura", $paymentsResponse->json());
+}
+
+$payments = $paymentsResponse->json()['data'];
+
+if (count($payments) === 0) {
+    dd("Nenhum pagamento gerado para a assinatura.");
+}
+
+// Pegamos o primeiro pagamento gerado
+$payment = $payments[0];
+
+if (!isset($payment['invoiceUrl'])) {
+    dd("Pagamento não contém invoiceUrl", $payment);
+}
+
+$invoiceUrl = $payment['invoiceUrl'];
+
+
+// ===============================
+// 8) Salvar informações e REDIRECIONAR PARA O invoiceUrl
+// ===============================
+
+$barbearia_user->asaas_payment_url = $invoiceUrl;
+$barbearia_user->assinatura_id = $subscriptionId;
+$barbearia_user->asaas_customer_id = $clienteId;
+$barbearia_user->save();
+$barbearia_user->delete();
+
+// ❗ Você estava DELETANDO o barbearia_user, removi isso
+// $barbearia_user->delete();
+
+// REDIRECIONAR PARA O invoiceUrl
+return redirect()->away($invoiceUrl);
+
     }
 
     private function limparCacheBarbearias()
