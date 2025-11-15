@@ -179,7 +179,7 @@ $assinaturaResponse = Http::withHeaders([
     "description" => "Assinatura BarberConnect",
     "externalReference" => (string) $barbearia_user->id,
     "callback" =>[
-        "success" => env('APP_URL') . "/gerenciar/" . $barbearia->slug. "/billing" ,
+        "successUrl" => env('APP_URL') . "/gerenciar/" . $barbearia->slug. "/billing" ,
     ]
 
 ]);
