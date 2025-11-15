@@ -39,7 +39,7 @@ class Colaborador extends Component
         $this->assinaturas = [];
 
         $token = env('PIX_ACCESS_TOKEN');
-        $baseUrl = 'https://api-sandbox.asaas.com/v3';
+        $baseUrl = 'https://api.asaas.com/v3';
 
         foreach ($this->barbearia->barbeiros()->withTrashed()->get() as $barbeiro) {
             if ($barbeiro->assinatura_id) {
@@ -76,7 +76,7 @@ class Colaborador extends Component
     $this->faturas = (function () {
         $all = [];
         $token = env('PIX_ACCESS_TOKEN');
-        $baseUrl = 'https://api-sandbox.asaas.com/v3';
+        $baseUrl = 'https://api.asaas.com/v3';
 
         foreach ($this->barbearia->barbeiros()->withTrashed()->get() as $barbeiro) {
 
@@ -150,7 +150,7 @@ class Colaborador extends Component
         }
 
         $token = env('PIX_ACCESS_TOKEN');
-        $baseUrl = 'https://api-sandbox.asaas.com/v3';
+        $baseUrl = 'https://api.asaas.com/v3';
 
         // valor da assinatura (use o campo price ou outro)
         $value = $barbeiro->price ?? 30;
@@ -209,7 +209,7 @@ class Colaborador extends Component
     }
 
     $token = env('PIX_ACCESS_TOKEN');
-    $baseUrl = 'https://api-sandbox.asaas.com/v3';
+    $baseUrl = 'https://api.asaas.com/v3';
 
    $resp = Http::withHeaders([
             'accept' => 'application/json',
@@ -289,7 +289,7 @@ class Colaborador extends Component
         }
 
         $token = env('PIX_ACCESS_TOKEN');
-        $baseUrl = 'https://api-sandbox.asaas.com/v3';
+        $baseUrl = 'https://api.asaas.com/v3';
 
         try {
         $resp = Http::withHeaders([
@@ -326,7 +326,7 @@ class Colaborador extends Component
     {
         $this->cobrancas = [];
         $token = env('ASAAS_ACCESS_TOKEN');
-        $baseUrl = 'https://api-sandbox.asaas.com/v3';
+        $baseUrl = 'https://api.asaas.com/v3';
 
         try {
             $resp = Http::withHeaders([
