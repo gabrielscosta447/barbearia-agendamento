@@ -80,72 +80,54 @@
         <div class="flex-auto px-0 pt-0 pb-2">
           <div class="p-0 overflow-x-auto">
         
-            <table class="items-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
-              <thead class="align-bottom">
-                <tr>
-                  <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Usuário</th>
-                  <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Métodos de Pagamento</th>
-                  <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Adicionar Métodos</th>
-                  <th class="px-6 py-3 font-bold text-center uppercase align-middle bg-transparent border-b border-collapse shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Contratado</th>
-                  <th class="px-6 py-3 font-semibold capitalize align-middle bg-transparent border-b border-collapse border-solid shadow-none dark:border-white/40 dark:text-white tracking-none whitespace-nowrap text-slate-400 opacity-70"></th>
-                </tr>
-              </thead>
-              <tbody>
-           
-                @foreach($barbearia->barbeiros()->withTrashed()->get() as $barbeiro)
+         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-6">
 
-              
-                <tr>
-                
-                  <td class="p-2 align-middle bg-transparent {{ !$loop->last ? ' border-b dark:border-white/40' : '' }} whitespace-nowrap shadow-transparent">
-                    <div class="flex px-2 py-1">
-                      <div>
-                        <img src="{{ $barbeiro->user->profile_photo_url }}" class="inline-flex items-center justify-center mr-4 text-sm text-white transition-all duration-200 ease-in-out h-9 w-9 rounded-xl" alt="user1" />
-                      </div>
-                      <div class="flex flex-col justify-center">
-                        <h6 class="mb-0 text-sm leading-normal dark:text-white">{{ $barbeiro->user->name }} @if(auth()->user()->id == $barbeiro->user->id) (Você mesmo) @endif</h6>
-                      <p class="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">{{  $barbeiro->user->email }}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="p-2 align-middle bg-transparent {{ !$loop->last ? ' border-b dark:border-white/40' : '' }} whitespace-nowrap shadow-transparent">
-                 
-                    <p class="mb-0 text-xs leading-tight dark:text-white dark:opacity-80 text-slate-400">
-                      @forelse($barbeiro->payment_methods_allowed ?? [] as $paymentMethod)
-                      @if(!$loop->last)
-                        {{ $paymentMethod }},
-                      @else 
-                      {{ $paymentMethod }}
-                      @endif
-                      @empty 
-                        Nenhum método de pagamento.
+@foreach($barbearia->barbeiros()->withTrashed()->get() as $barbeiro)
 
-                      @endforelse
+<div class="bg-white dark:bg-slate-850 rounded-2xl shadow-md p-4 border dark:border-white/10 transition hover:shadow-lg">
 
+    <div class="flex items-center gap-3">
+        <img src="{{ $barbeiro->user->profile_photo_url }}" class="w-12 h-12 rounded-xl shadow" alt="Foto">
+        <div>
+            <h3 class="text-md font-semibold dark:text-white">
+                {{ $barbeiro->user->name }}
+                @if(auth()->user()->id == $barbeiro->user->id)
+                <span class="text-xs text-emerald-500">(Você)</span>
+                @endif
+            </h3>
+            <p class="text-sm text-slate-500 dark:text-white/70">{{ $barbeiro->user->email }}</p>
+        </div>
+    </div>
 
-                    </p>
-                  </td>
-                  <td class="p-2 text-sm leading-normal text-center align-middle bg-transparent {{ !$loop->last ? ' border-b dark:border-white/40' : '' }} whitespace-nowrap shadow-transparent">
-                    <span wire:click="edit({{ $barbeiro->id }})" class="bg-gradient-to-tl from-emerald-500 to-teal-400 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white cursor-pointer">Adicionar</span>
-                  
-                  </td>
-                 
-                  <td class="p-2 text-center align-middle bg-transparent {{ !$loop->last ? ' border-b dark:border-white/40' : '' }} whitespace-nowrap shadow-transparent">
-                    <span class="text-xs font-semibold leading-tight dark:text-white dark:opacity-80 text-slate-400">{{ $barbearia->created_at->format('d/m/Y') }}</span>
-                  </td>
-                  <td class="p-2 align-middle bg-transparent {{ !$loop->last ? ' border-b dark:border-white/40' : '' }}  whitespace-nowrap shadow-transparent">
-                    <input type="radio"   wire:model.change="barbeiros" value="{{ $barbeiro->id }}" id="checkbox_{{$barbeiro->id}}">
-                   
-                  </td>
-                </tr>
-       
-       
-        
-            
-              @endforeach
-               
-              </tbody>
-            </table>
+    <div class="mt-4">
+        <p class="text-xs uppercase text-slate-400 dark:text-white/70 font-semibold">Métodos de Pagamento</p>
+        <p class="text-sm dark:text-white">
+            @forelse($barbeiro->payment_methods_allowed ?? [] as $pm)
+                {{ $pm }}@if(!$loop->last), @endif
+            @empty
+                <span class="text-slate-400 text-sm">Nenhum método.</span>
+            @endforelse
+        </p>
+    </div>
+
+    <div class="mt-4 flex justify-between items-center">
+        <button wire:click="edit({{ $barbeiro->id }})"
+            class="px-3 py-1 rounded-lg text-xs bg-emerald-500 text-white font-bold uppercase">
+            Adicionar Método
+        </button>
+
+        <label class="flex items-center gap-1 text-sm dark:text-white cursor-pointer">
+            <input type="radio" wire:model.change="barbeiros" value="{{ $barbeiro->id }}">
+            <span>Selecionar</span>
+        </label>
+    </div>
+
+</div>
+
+@endforeach
+
+</div>
+
         
           </div>
         </div>
@@ -193,84 +175,71 @@
         <div class="flex-auto px-0 pt-0 pb-2">
           <div class="p-0 overflow-x-auto">
          
-            <table class="items-center justify-center w-full mb-0 align-top border-collapse dark:border-white/40 text-slate-500">
-              <thead class="align-bottom">
-                <tr>
-                  <th class="px-6 py-3 font-bold text-left uppercase align-middle bg-transparent border-b shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Data</th>
-                  
-                  <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Total de Serviços</th>
-                  <th class="px-6 py-3 pl-2 font-bold text-left uppercase align-middle bg-transparent border-b shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Concluído as</th>
-                  <th class="px-6 py-3 pl-2 font-bold text-center uppercase align-middle bg-transparent border-b shadow-none dark:border-white/40 dark:text-white text-xxs border-b-solid tracking-none whitespace-nowrap text-slate-400 opacity-70">Ações</th>
-                  <th class="px-6 py-3 font-semibold capitalize align-middle bg-transparent border-b border-solid shadow-none dark:border-white/40 dark:text-white tracking-none whitespace-nowrap"></th>
-                </tr>
-              </thead>
-              <tbody class="border-t">
-                
-                @forelse($this->agendamentosFiltrados ?? [] as $agendamento)
-                <tr>
-                  <td class="p-2 align-middle bg-transparent{{ !$loop->last ? ' border-b dark:border-white/40' : '' }} whitespace-nowrap shadow-transparent">
-                      <div class="flex px-2">
-                          <div>
-                            <i class="relative top-0 text-sm leading-normal text-blue-500 ni ni-calendar-grid-58 mr-2"></i>
-                          </div>
-                          <div class="my-auto">
-                              <h6 class="mb-0 text-sm leading-normal dark:text-white">{{$agendamento->start_date->format('d/m/Y H:i')  }} - {{$agendamento->owner->name}}</h6>
-                          </div>
-                      </div>
-                  </td>
-                  <td class="p-2 align-middle bg-transparent{{ !$loop->last ? ' border-b dark:border-white/40' : '' }} whitespace-nowrap shadow-transparent">
-                      <p class="mb-0 text-sm font-semibold leading-normal dark:text-white dark:opacity-60">R${{ $agendamento->total_price}}</p>
-                  </td>
-                  <td class="p-2 align-middle bg-transparent{{ !$loop->last ? ' border-b dark:border-white/40' : '' }} whitespace-nowrap shadow-transparent">
-                    <span class="text-xs font-semibold leading-tight dark:text-white dark:opacity-60">
-                        {{ isset($agendamento->deleted_at) ? $agendamento->deleted_at->format('d/m/Y H:i') : "Não concluído" }}
-                    </span>
-                </td>
-                  <td class="p-2 text-sm leading-normal text-center align-middle bg-transparent {{ !$loop->last ? ' border-b dark:border-white/40' : '' }} whitespace-nowrap shadow-transparent">
-                    <span class="bg-blue-500 cursor-pointer px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white" wire:click="selectedAgendamento({{$agendamento->id}})" wire:loading.attr="disabled" wire:loading.class="opacity-50" ">Editar</span>
+         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mt-6">
 
-                    @if($agendamento->deleted_at)
-                    <span class="bg-gradient-to-tl from-red-600 to-orange-600  cursor-pointer 0 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white" wire:click="cancelar({{ $agendamento->id }})" wire:loading.attr="disabled" wire:loading.class="opacity-50" wire:target="cancelar({{ $agendamento->id }})">Cancelar</span>
-                    @else
-              
-               
-                  <span class="bg-gradient-to-tl from-emerald-500 to-teal-400  cursor-pointer 0 px-2.5 text-xs rounded-1.8 py-1.4 inline-block whitespace-nowrap text-center align-baseline font-bold uppercase leading-none text-white" wire:click="concluir({{ $agendamento->id }})" wire:loading.attr="disabled" wire:loading.class="opacity-50" wire:target="concluir({{ $agendamento->id }})">Concluir</span>
-                    @endif
-                       
+@forelse($this->agendamentosFiltrados ?? [] as $agendamento)
 
-                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '',55 . $agendamento->owner->phone) }}" target="_blank" class="text-blue-500">
-            {{ $agendamento?->owner->phone }}
+<div class="bg-white dark:bg-slate-850 rounded-2xl shadow-md p-5 border dark:border-white/10 hover:shadow-lg transition">
+
+    <div class="flex items-center gap-3">
+        <div class="text-blue-500 text-xl">
+            <i class="ni ni-calendar-grid-58"></i>
+        </div>
+        <div>
+            <p class="text-sm font-semibold dark:text-white">
+                {{ $agendamento->start_date->format('d/m/Y H:i') }}
+            </p>
+            <p class="text-xs text-slate-500 dark:text-white/70">{{ $agendamento->owner->name }}</p>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <p class="text-xs uppercase text-slate-400 dark:text-white/70">Preço Total</p>
+        <p class="font-bold text-slate-700 dark:text-white">R$ {{ $agendamento->total_price }}</p>
+    </div>
+
+    <div class="mt-3">
+        <p class="text-xs uppercase text-slate-400 dark:text-white/70">Concluído em</p>
+        <p class="text-sm dark:text-white">
+            {{ $agendamento->deleted_at ? $agendamento->deleted_at->format('d/m/Y H:i') : 'Não concluído' }}
+        </p>
+    </div>
+
+    <div class="flex flex-wrap justify-between items-center gap-2 mt-4">
+
+        <button wire:click="selectedAgendamento({{ $agendamento->id }})"
+            class="px-3 py-1 bg-blue-500 text-white text-xs rounded-lg font-bold uppercase">
+            Editar
+        </button>
+
+        @if($agendamento->deleted_at)
+        <button wire:click="cancelar({{ $agendamento->id }})"
+            class="px-3 py-1 bg-red-500 text-white text-xs rounded-lg font-bold uppercase">
+            Cancelar
+        </button>
+        @else
+        <button wire:click="concluir({{ $agendamento->id }})"
+            class="px-3 py-1 bg-emerald-500 text-white text-xs rounded-lg font-bold uppercase">
+            Concluir
+        </button>
+        @endif
+
+        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '',55 . $agendamento->owner->phone) }}"
+           target="_blank" class="text-blue-500 text-sm underline">
+            {{ $agendamento->owner->phone }}
         </a>
-                    
-                  </td>
-                  <td class="p-2 align-middle bg-transparent{{ !$loop->last ? ' border-b dark:border-white/40' : '' }} whitespace-nowrap shadow-transparent">
-                      <button class="inline-block px-5 py-2.5 mb-0 font-bold text-center uppercase align-middle transition-all bg-transparent border-0 rounded-lg shadow-none leading-normal text-sm ease-in bg-150 tracking-tight-rem bg-x-25 text-slate-400">
-                          <i class="text-xs leading-tight fa fa-ellipsis-v dark:text-white dark:opacity-60"></i>
-                      </button>
-                  </td>
-              </tr>
-                
-                @empty 
-                  <tr >
-                  <td class="p-2 align-center bg-transparent whitespace-nowrap shadow-transparent">
-                      <div class="flex px-2">
-                          <div>
-                            <i class="relative top-0 text-sm leading-normal text-blue-500 ni ni-calendar-grid-58 mr-2"></i>
-                          </div>
-                          <div class="my-auto">
-                              <h6 class="mb-0 text-sm leading-normal dark:text-white">Nenhum agendamento encontrado.</h6>
-                          </div>
-                      </div>
-                  </td>
-                  </tr>
-                @endforelse
 
-              </tbody>
-              <div class="flex justify-center pb-5">
-                {{ $this->agendamentosFiltrados?->links() }}
+    </div>
 
 </div>
-            </table>
+
+@empty
+
+<div class="text-center py-10 dark:text-white">Nenhum agendamento encontrado.</div>
+
+@endforelse
+
+</div>
 
             
           

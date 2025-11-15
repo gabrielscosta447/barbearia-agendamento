@@ -158,7 +158,7 @@ abstract class WizardComponent extends Component implements WizardForm
         $this->callHooksStep('updating', $name, $value);
     }
 
-    public function save($formData, $selectedPaymentMethod,$selectedPlan): void
+    public function save(): void
     {
         $this->callHook('beforeValidate');
     
@@ -170,9 +170,9 @@ abstract class WizardComponent extends Component implements WizardForm
     
         $this->callHook('beforeSave');
     
-        $this->stepClasses(function (Step $stepInstance) use ($state, $formData, $selectedPaymentMethod,$selectedPlan) {
+        $this->stepClasses(function (Step $stepInstance) use ($state) {
             if (method_exists($stepInstance, 'save')) {
-                $stepInstance->save($state, $formData, $selectedPaymentMethod,$selectedPlan);
+                $stepInstance->save($state);
             }
         });
     

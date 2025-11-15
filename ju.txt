@@ -170,9 +170,9 @@ abstract class WizardComponent extends Component implements WizardForm
     
         $this->callHook('beforeSave');
     
-        $this->stepClasses(function (Step $stepInstance) use ($state, $formData, $selectedPaymentMethod,$selectedPlan) {
+        $this->stepClasses(function (Step $stepInstance) use ($state, $formData) {
             if (method_exists($stepInstance, 'save')) {
-                $stepInstance->save($state, $formData, $selectedPaymentMethod,$selectedPlan);
+                $stepInstance->save($state, $formData);
             }
         });
     

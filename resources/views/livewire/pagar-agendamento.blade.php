@@ -1,11 +1,11 @@
 <div class="max-w-md mx-auto bg-white shadow-lg rounded-2xl p-6 border border-gray-200">
     {{-- QR Code --}}
     <div class="flex flex-col items-center text-center">
-        <img
-            src="data:image/png;base64,{{ $qrCodePix }}"
-            alt="QR Code Pix"
-            class="w-48 h-48 object-contain mb-4"
-        />
+        <img 
+        src="data:image/png;base64,{{ $agendamento->id_pix }}" 
+        alt="QR Code Pix"
+        style="width: 250px; height: 250px; border-radius: 12px;"
+    >
 
         <h2 class="text-lg font-semibold text-gray-800 mb-2">Pagamento via Pix</h2>
         <p class="text-gray-500 text-sm">Escaneie o QR Code abaixo ou copie o código Pix.</p>
