@@ -15,7 +15,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule):void
     {
-        $schedule->job(new VerificarPagamento())->dailyAt('8:00');
         $schedule->job(new NotificationJob())->everyMinute();
         $schedule->job(new ConcluirAgendamentos())->everyMinute();
 
