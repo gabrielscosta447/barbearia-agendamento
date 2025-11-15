@@ -15,11 +15,9 @@ class PagarAgendamento extends Component
     public $copiado = false;
     public function mount($id) {
         $this->agendamento = Agendamento::find($id);
-        $bancoDoBrasilService = new BancoDoBrasilService();
-        $response = $bancoDoBrasilService->obterPix($this->agendamento->id_pix);
-        $pixCopiaECola = $response['pixCopiaECola'];
-        $this->qrCodePix = base64_encode(QrCode::format('png')->size(250)->generate($pixCopiaECola));
-        $this->pixCopiaECola = $pixCopiaECola;
+  
+        $this->qrCodePix = $this->agendamento->id_pix;
+    
     }
    
     public function voltar() {

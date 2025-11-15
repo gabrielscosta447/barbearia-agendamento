@@ -47,7 +47,7 @@ use App\Http\Controllers\BancodoBrasilController;
 
 
 Route::post('/webhooks',[Webhooks::class, 'webhook'])->name('webhook');
-
+Route::post('/webhooks-asaas',[Webhooks::class, 'webhookASAAS'])->name('webhook.asaas');
 
 Route::view('view', 'view');
 Route::get('/barbearia/{nome}', [BarbeariaController::class, 'buscarPorNome']);

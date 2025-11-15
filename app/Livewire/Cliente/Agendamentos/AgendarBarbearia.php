@@ -350,12 +350,17 @@ $credential = new ServiceAccountCredentials(
     $totalFormatado = number_format($totalPagar, 2, '.', '');
 
    $bancoDoBrasilService = new BancoDoBrasilService();
-   $response = $bancoDoBrasilService->criarPagamentoPix($totalFormatado);
-    $agendamento->id_pix = $response['txid'];
+  
     $agendamento->total_price = $total;
      $agendamento->end_date = $end_date_clone;
      $agendamento->save();
+     $response = $bancoDoBrasilService->criarPagamentoPix($totalFormatado, $agendamento->id);
+   
+    $agendamento->update([
+    'id_pix' => $response['encodedImage'] ?? null,
+]);
 
+ 
      $agendamento->cortes()->attach($this->cortes);
      /*       $total = 0;
        foreach($this->cortes as $corte){

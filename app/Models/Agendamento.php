@@ -14,6 +14,14 @@ class Agendamento extends Model
            'start_date' => 'datetime',
            'end_date' => 'datetime'
     ];
+    protected $fillable = [
+        
+        'id_pix',
+        'qrcode',
+        'payload'
+    
+        
+    ];
 
     public function user(){
          return $this->belongsTo(BarbeariaUser::class,"barbearia_user_id");

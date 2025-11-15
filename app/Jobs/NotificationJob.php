@@ -64,7 +64,7 @@ $credential = new ServiceAccountCredentials(
                             "notification" => [
                                 "title" => "Falta uma Hora para o seu agendamento!",
                                 "body" => "Data: " . $start_date_formatted,
-                                "image" => env("APP_URL") . '/storage/' . $agendamento->colaborador->barbearia->imagem
+                                "image" => env("APP_URL") . 'storage/' . $agendamento->colaborador->barbearia->imagem
                             ],
                             "webpush" => [
                                 "fcm_options" => [

@@ -3,239 +3,298 @@
 namespace App\Livewire\Gerenciar\Telas;
 
 use App\Models\Barbearia;
-use Livewire\Attributes\Computed;
-use Illuminate\Support\Facades\Http;
 use Livewire\Component;
-use Livewire\Attributes\On;
-use MercadoPago\MercadoPagoConfig;
-use App\Models\BarbeariaUser;
-use MercadoPago\Client\Customer\CustomerClient;
-use MercadoPago\Client\Customer\CustomerCardClient;
-use MercadoPago\Net\MPSearchRequest;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
-use App\Enums\PaymentMethods;
-
+use App\Models\BarbeariaUser;
+use Carbon\Carbon;
 
 class Colaborador extends Component
 {
-
     public Barbearia $barbearia;
     public $selectedBarbeiro;
-    public $paymentMethods = [];
-    public $simpleModal;
-    public $payerEmail;
-    public ?BarbeariaUser $isEditing;
-    
+    public $simpleModal = false;
+    public $faturas = [];
+    public $assinaturas = []; // assinaturas carregadas por barbeiro
+    public $cobrancas = []; // cobranças da assinatura selecionada
+    public $loading = false;
 
-    public function mount($slug) {
-          $this->barbearia = Barbearia::where('slug', $slug)->first();
-    }
-  
+    protected $listeners = [
+        'refreshAssinaturas' => 'carregarAssinaturas'
+    ];
 
-    public function abrirModal($id) {
-        $barbeiro = BarbeariaUser::withTrashed()->find($id);
-        $this->simpleModal = true;
-              $this->selectedBarbeiro =  $barbeiro;
-    }
- 
-
-    public function editarAssinatura(BarbeariaUser $barbeiro, $formData,$paymentMethod){
-        $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN");
-             if($barbeiro->payment_method->value == "Cartão de Crédito" || $barbeiro->payment_method->value == "Cartão de Débito" ){
-                          if($paymentMethod == "debit_card" || $paymentMethod == "credit_card" ){
-                                  $barbeiro->payment_id = null;
-                            if (defined(PaymentMethods::class . '::' . $formData['payment_method_id'])) {
-        
-                                $barbeiro->payment_method = constant(PaymentMethods::class . '::' . $formData['payment_method_id']);
-                            } else {
-                           
-                    
-                                $barbeiro->payment_method = constant(PaymentMethods::class . '::' . $paymentMethod);
-                            }
-                            $response =  Http::withHeaders([
-                                'Authorization' => 'Bearer ' . $accessToken,
-                                'Content-Type' => 'application/json',
-                            ])->put('https://api.mercadopago.com/preapproval/' . $this->barbearia->assinatura_id, [
-                                
-                                    "card_token_id"=> $formData['token']
-                                
-                            ]); 
-                            
-                            $barbeiro->save();
-                          }else{
-
-                            $assinatura =  $barbeiro->assinatura_id;
-
-                            $barbeiro->assinaura_id = null;
-         
-                         if (defined(PaymentMethods::class . '::' . $formData['payment_method_id'])) {
-                 
-                             $barbeiro->payment_method = constant(PaymentMethods::class . '::' . $formData['payment_method_id']);
-                         } else {
-                        
-                 
-                             $barbeiro->payment_method = constant(PaymentMethods::class . '::' . $paymentMethod);
-                         }
-                               $formData["payer"]["email"];
-                           $barbeiro->save();
-         
-                         $response =  Http::withHeaders([
-                             'Authorization' => 'Bearer ' . $accessToken,
-                             'Content-Type' => 'application/json',
-                         ])->put('https://api.mercadopago.com/preapproval/' .  $assinatura, [
-                             
-                                 'status' => "cancelled"
-                             
-                         ]);
-                                      
-                      
-
-
-                          }
-             }else{
-
-                 
-                if (defined(PaymentMethods::class . '::' . $formData['payment_method_id'])) {
-                 
-                    $barbeiro->payment_method = constant(PaymentMethods::class . '::' . $formData['payment_method_id']);
-                } else {
-               
-        
-                    $barbeiro->payment_method = constant(PaymentMethods::class . '::' . $paymentMethod);
-                }
-
-
-                 $barbeiro->payment_id = null;
-
-
-               
-                             
-             }
-    }
-
-    public function edit($id) {
-        $barbeiro = BarbeariaUser::withTrashed()->find($id);
-            $this->isEditing = $barbeiro;
-
-    }
-
-    #[On('cancelEditMode')]
-    public function cancelarEdicao() {
-        $this->isEditing = null;
-    }
-
-    public function adicionarMetodos() {
-           
-    }
-
-  
-
-    public function cancelar($id) {
-      
-        $barbeiro = BarbeariaUser::withTrashed()->find($id);
-       
-           
-
-           
-        
-            // Token de autenticação
-            $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN");
-        
-            // Endpoint da API de pagamento
-            $url = "https://api.mercadopago.com/preapproval/{$barbeiro->assinatura_id}";
-        
-            // Envia o PUT para cancelar ou pausar a assinatura
-            Http::withToken($accessToken)->put($url, [
-                'status' => 'cancelled'
-            ]);
-         /*    $barbeiro->payment_method = null;
-            $barbeiro->assinatura_id = null;
-            
-            $barbeiro->save();
-            $barbeiro->delete(); */
-          
-       
-    }
-    public function save($cardFormData) {
-        try {
-            MercadoPagoConfig::setAccessToken(env("MERCADO_PAGO_ACCESS_TOKEN"));
-            $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN");
-            
-            $customerResponse = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $accessToken,
-            ])->get('https://api.mercadopago.com/v1/customers/search', [
-                'email' => auth()->user()->email
-            ]);
-    
-        
-            $customer = json_decode($customerResponse->body());
-             
-    
-            // Verifica se o cliente foi encontrado
-            if (empty($customer->results)) {
-                $client_customer = new CustomerClient();
-                $customer = $client_customer->create(["email" => auth()->user()->email]);
-    
-            
-                auth()->user()->payer_id = $customer->id;
-                auth()->user()->save();
-            } else {
-               
-                auth()->user()->payer_id = $customer->results[0]->id;
-                auth()->user()->save();
-            }
-    
-            $client_card = new CustomerCardClient();
-            $client_card->create(auth()->user()->payer_id, ["token" => $cardFormData['token']]);
-
-            Cache::forget('mercado_pago_cards_' . auth()->user()->payer_id);
-            
-        } catch (\Exception $e) {
-            dd($e);
-        }
-    }
-    
-    public function render()
+    public function mount($slug)
     {
-        $faturas = [];
-    
-        // Tente recuperar os dados do cache
-        $faturas = Cache::remember('faturas_' . $this->barbearia->id, now()->addHours(1), function () {
-            $faturas = [];
-    
-            $barbeiro = $this->barbearia->barbeiros()->withTrashed()->first();
-    
-            foreach ($this->barbearia->barbeiros()->withTrashed()->get() as $barbeiro) {
+        $this->barbearia = Barbearia::where('slug', $slug)->firstOrFail();
+        $this->carregarAssinaturas();
+        $this->carregarFaturasCacheadas();
+    }
+
+    /**
+     * Carrega assinaturas (busca subscription pelo campo assinatura_id de cada BarbeariaUser)
+     */
+    public function carregarAssinaturas()
+    {
+        $this->assinaturas = [];
+
+        $token = env('PIX_ACCESS_TOKEN');
+        $baseUrl = 'https://api-sandbox.asaas.com/v3';
+
+        foreach ($this->barbearia->barbeiros()->withTrashed()->get() as $barbeiro) {
+            if ($barbeiro->assinatura_id) {
                 try {
-                    $accessToken = env("MERCADO_PAGO_ACCESS_TOKEN");
-    
-                    if ($barbeiro->payment_method?->value === 'PIX' || $barbeiro->payment_method?->value === 'Boleto') {
-                        $response = Http::withToken($accessToken)->get('https://api.mercadopago.com/authorized_payments/search', [
-                            'payment_id' => $barbeiro->payment_id,
-                        ]);
+                    $resp = Http::withHeaders([
+                        'accept' => 'application/json',
+                        'access_token' => $token,
+                    ])->get("{$baseUrl}/subscriptions/{$barbeiro->assinatura_id}");
+
+                    if ($resp->successful()) {
+                        $dados = $resp->json();
+                        $this->assinaturas[$barbeiro->id] = $dados;
                     } else {
-                        $response = Http::withToken($accessToken)->get('https://api.mercadopago.com/authorized_payments/search', [
-                            'preapproval_id' => $barbeiro->assinatura_id,
-                        ]);
-                    }
-    
-                    if ($response->successful()) {
-                        $faturas = array_merge($faturas, $response->json()['results']);
-                    } else {
-                        $faturas = [];
+                        // limpar campo se subscription inexistente
+                        if ($resp->status() === 404) {
+                            $barbeiro->assinatura_id = null;
+                            $barbeiro->save();
+                        }
                     }
                 } catch (\Exception $e) {
-                    dd($e);
+                    \Log::error('Erro ao buscar assinatura Asaas: ' . $e->getMessage());
                 }
             }
-    
-            return $faturas;
+        }
+    }
+
+    /**
+     * Carrega faturas (payments) de todas assinaturas e agrupa em $this->faturas
+     */
+    public function carregarFaturasCacheadas()
+    {
+        $cacheKey = 'faturas_barbearia_' . $this->barbearia->id;
+
+        $this->faturas = Cache::remember($cacheKey, now()->addMinutes(10), function () {
+            $all = [];
+            $token = env('PIX_ACCESS_TOKEN');
+            $baseUrl = 'https://api-sandbox.asaas.com/v3';
+
+            foreach ($this->barbearia->barbeiros()->withTrashed()->get() as $barbeiro) {
+                // 1) se tem assinatura, buscar payments da assinatura
+                if ($barbeiro->assinatura_id) {
+                    try {
+                        $resp = Http::withHeaders([
+                            'accept' => 'application/json',
+                            'access_token' => $token,
+                        ])->get("{$baseUrl}/payments", [
+                            'subscription' => $barbeiro->assinatura_id,
+                            'limit' => 50
+                        ]);
+
+                        if ($resp->successful()) {
+                            $data = $resp->json('data') ?? [];
+                            foreach ($data as $p) {
+                                $p['barbearia_user_id'] = $barbeiro->id;
+                                $all[] = $p;
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        \Log::error('Erro ao buscar payments Asaas: ' . $e->getMessage());
+                    }
+                }
+
+                // 2) se tem payment avulso salvo (payment_id), buscar esse payment
+                if ($barbeiro->payment_id) {
+                    try {
+                        $resp = Http::withHeaders([
+                            'accept' => 'application/json',
+                            'access_token' => $token,
+                        ])->get("{$baseUrl}/payments/{$barbeiro->payment_id}");
+
+                        if ($resp->successful()) {
+                            $p = $resp->json();
+                            $p['barbearia_user_id'] = $barbeiro->id;
+                            $all[] = $p;
+                        }
+                    } catch (\Exception $e) {
+                        \Log::error('Erro ao buscar payment id Asaas: ' . $e->getMessage());
+                    }
+                }
+            }
+
+            // ordenar por data (decrescente)
+            usort($all, function ($a, $b) {
+                $da = $a['dateCreated'] ?? ($a['debitDate'] ?? null);
+                $db = $b['dateCreated'] ?? ($b['debitDate'] ?? null);
+                return strtotime($db) <=> strtotime($da);
+            });
+
+            return $all;
         });
-    
+    }
+
+    /**
+     * Criar assinatura no Asaas para um BarbeariaUser
+     * billingType: 'PIX' ou 'BOLETO' ou 'CREDIT_CARD'
+     */
+    public function criarAssinatura($barbeariaUserId, $billingType = 'PIX')
+    {
+        $this->loading = true;
+
+        $barbeiro = BarbeariaUser::withTrashed()->find($barbeariaUserId);
+        if (!$barbeiro) {
+            $this->dispatchBrowserEvent('notify', ['type' => 'error', 'message' => 'Barbeiro não encontrado']);
+            $this->loading = false;
+            return;
+        }
+
+        $token = env('PIX_ACCESS_TOKEN');
+        $baseUrl = 'https://api-sandbox.asaas.com/v3';
+
+        // valor da assinatura (use o campo price ou outro)
+        $value = $barbeiro->price ?? 30;
+
+        $payload = [
+            'customer' => $barbeiro->user->asaas_customer_id ?? null, // se já tiver customer salvo
+            'value' => (float) $value,
+            'description' => 'Assinatura ' . ($this->barbearia->nome ?? ''),
+            'billingType' => $billingType,
+            'cycle' => 'MONTHLY',
+            'externalReference' => (string) $barbeiro->id,
+            'sendPaymentByPostalService' => false
+        ];
+
+        // se não tiver customer, deixe em branco e o Asaas criará e retornará o campo customer
+        try {
+            $resp = Http::withHeaders([
+                'accept' => 'application/json',
+                'content-type' => 'application/json',
+                'access_token' => $token,
+            ])->post("{$baseUrl}/subscriptions", $payload);
+
+            if ($resp->successful()) {
+                $sub = $resp->json();
+
+                // salva no banco
+                $barbeiro->assinatura_id = $sub['id'] ?? null;
+                $barbeiro->asaas_customer_id = $sub['customer'] ?? $barbeiro->asaas_customer_id;
+                $barbeiro->payment_method = $billingType;
+                $barbeiro->save();
+
+                // atualizar assinaturas/faturas
+                $this->carregarAssinaturas();
+                Cache::forget('faturas_barbearia_' . $this->barbearia->id);
+                $this->carregarFaturasCacheadas();
+
+                $this->dispatchBrowserEvent('notify', ['type' => 'success', 'message' => 'Assinatura criada no Asaas.']);
+            } else {
+                \Log::error('Erro criar assinatura Asaas', ['body' => $resp->body(), 'status' => $resp->status()]);
+                $this->dispatchBrowserEvent('notify', ['type' => 'error', 'message' => 'Falha ao criar assinatura.']);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Exception criarAssinatura: ' . $e->getMessage());
+            $this->dispatchBrowserEvent('notify', ['type' => 'error', 'message' => 'Erro de comunicação Asaas.']);
+        }
+
+        $this->loading = false;
+    }
+
+    /**
+     * Cancelar assinatura (ou pausar) via Asaas
+     */
+    public function cancelarAssinatura($barbeariaUserId)
+    {
+        $barbeiro = BarbeariaUser::withTrashed()->find($barbeariaUserId);
+        if (!$barbeiro || !$barbeiro->assinatura_id) {
+            $this->dispatchBrowserEvent('notify', ['type' => 'error', 'message' => 'Assinatura não encontrada.']);
+            return;
+        }
+
+        $token = env('ASAAS_ACCESS_TOKEN');
+        $baseUrl = 'https://api-sandbox.asaas.com/v3';
+
+        try {
+            $resp = Http::withHeaders([
+                'accept' => 'application/json',
+                'content-type' => 'application/json',
+                'access_token' => $token,
+            ])->put("{$baseUrl}/subscriptions/{$barbeiro->assinatura_id}", [
+                'status' => 'cancelled'
+            ]);
+
+            if ($resp->successful()) {
+                $barbeiro->payment_method = null;
+                $barbeiro->assinatura_id = null;
+                $barbeiro->save();
+                $barbeiro->delete(); // suspende
+                Cache::forget('faturas_barbearia_' . $this->barbearia->id);
+                $this->carregarAssinaturas();
+                $this->carregarFaturasCacheadas();
+                $this->dispatchBrowserEvent('notify', ['type' => 'success', 'message' => 'Assinatura cancelada.']);
+            } else {
+                \Log::error('Erro cancelar assinatura Asaas', ['body' => $resp->body()]);
+                $this->dispatchBrowserEvent('notify', ['type' => 'error', 'message' => 'Falha ao cancelar assinatura.']);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Exception cancelarAssinatura: ' . $e->getMessage());
+            $this->dispatchBrowserEvent('notify', ['type' => 'error', 'message' => 'Erro de comunicação Asaas.']);
+        }
+    }
+
+    /**
+     * Buscar cobranças (payments) de uma assinatura e popular $this->cobrancas
+     */
+    public function verCobrancas($subscriptionId)
+    {
+        $this->cobrancas = [];
+        $token = env('ASAAS_ACCESS_TOKEN');
+        $baseUrl = 'https://api-sandbox.asaas.com/v3';
+
+        try {
+            $resp = Http::withHeaders([
+                'accept' => 'application/json',
+                'access_token' => $token
+            ])->get("{$baseUrl}/payments", [
+                'subscription' => $subscriptionId,
+                'limit' => 50
+            ]);
+
+            if ($resp->successful()) {
+                $this->cobrancas = $resp->json('data') ?? [];
+            } else {
+                \Log::error('Erro verCobrancas Asaas', ['body' => $resp->body()]);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Exception verCobrancas: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Exibir modal de confirmação (usado no layout)
+     */
+    public function abrirModal($id)
+    {
+        $this->selectedBarbeiro = BarbeariaUser::withTrashed()->find($id);
+        $this->simpleModal = true;
+    }
+
+    public function cancelar($id)
+    {
+        // ação confirmada do modal: cancelar assinatura
+        $this->cancelarAssinatura($id);
+        $this->simpleModal = false;
+    }
+
+    public function render()
+    {
+        // garantir faturas atualizadas
+        $this->carregarAssinaturas();
+        $this->carregarFaturasCacheadas();
+
         return view('livewire.gerenciar.telas.colaborador', [
-            'faturas' => $faturas
+            'faturas' => $this->faturas,
+            'assinaturas' => $this->assinaturas,
+            'cobrancas' => $this->cobrancas
         ])->layout('components.layouts.barbearia', [
-            'barbearia' => $this->barbearia,
+            'barbearia' => $this->barbearia
         ]);
     }
 }
