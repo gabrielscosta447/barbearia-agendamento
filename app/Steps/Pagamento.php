@@ -99,7 +99,7 @@ class Pagamento extends Step
 
       
         $barbearia_user->barbearia_id = $barbearia->id;
-        $barbearia_user->price = 30;
+        $barbearia_user->price = 1;
         $barbearia_user->chave_pix = $state['chave_pix'];
         $barbearia_user->tipo_chave = $state['tipo_chave'];
         $barbearia_user->save();
