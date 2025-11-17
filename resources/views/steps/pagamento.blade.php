@@ -3,9 +3,7 @@
     <div class="text-center">
         <h2 class="text-2xl font-bold text-gray-800">Conclua a criação da sua barbearia</h2>
 
-        <p class="mt-2 text-gray-600">
-            Para finalizar, clique no botão abaixo para ir para a página de pagamento.
-        </p>
+       
 
         <div class="mt-6">
             <svg class="h-10 w-10 text-blue-600 mx-auto animate-spin"
@@ -24,7 +22,7 @@
         <button
             wire:click="save"
             class="mt-6 px-6 py-3  text-black rounded-lg shadow  transition">
-            Concluir Pagamento
+            Começe a usar agora
         </button>
 
     </div>
