@@ -99,7 +99,7 @@ class Pagamento extends Step
 
       
         $barbearia_user->barbearia_id = $barbearia->id;
-        $barbearia_user->price = 1;
+
         $barbearia_user->chave_pix = $state['chave_pix'];
         $barbearia_user->tipo_chave = $state['tipo_chave'];
         $barbearia_user->save();
@@ -173,9 +173,9 @@ $assinaturaResponse = Http::withHeaders([
 ])->post(env("PIX_BASE_URL") . "subscriptions", [
     "customer" => $clienteId,
     "billingType" => "UNDEFINED",
-    "value" => 30,
+    "value" => 1,
     "cycle" => "MONTHLY",
-    "nextDueDate" => \Carbon\Carbon::now()->format('Y-m-d'),
+"nextDueDate" => \Carbon\Carbon::tomorrow()->format('Y-m-d'),
     "description" => "Assinatura BarberConnect",
     "externalReference" => (string) $barbearia_user->id,
     "callback" =>[
