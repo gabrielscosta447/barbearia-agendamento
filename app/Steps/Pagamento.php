@@ -229,7 +229,7 @@ $barbearia_user->asaas_payment_url = $invoiceUrl;
 $barbearia_user->assinatura_id = $subscriptionId;
 $barbearia_user->asaas_customer_id = $clienteId;
 $barbearia_user->save();
-$barbearia_user->delete();
+
 
 // ❗ Você estava DELETANDO o barbearia_user, removi isso
 // $barbearia_user->delete();
