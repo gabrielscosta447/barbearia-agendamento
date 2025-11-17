@@ -20,6 +20,7 @@ class General extends Step
   public function mount() {
     $this->mergeState([
        'cep' => '',
+       'tipo_chave' => 'CPF',
     ]);
   }
 
