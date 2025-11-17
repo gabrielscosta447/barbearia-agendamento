@@ -141,12 +141,29 @@ public function getAllAvailableTimes($specificDate, $selectedAgendamento = null)
         $startHour = Carbon::parse($workingHour->start_hour);
         $endHour = Carbon::parse($workingHour->end_hour);
         $currentHour = clone $startHour;
-
+             $interval = $workingHour->intervals;
+    $hasInterval = isset($interval['interval']);
+    $intervalStart = $hasInterval ? Carbon::createFromFormat('H:i', $interval['interval']['start']) : null;
+    $intervalEnd   = $hasInterval ? Carbon::createFromFormat('H:i', $interval['interval']['end']) : null;
+        
+       
         while ($currentHour < $endHour) {
+            
+            
+                    // Pular horário dentro do intervalo de almoço
+        if ($hasInterval) {
+            $currentOnlyTime = Carbon::parse($currentHour->format('H:i'));
+
+            if ($currentOnlyTime >= $intervalStart && $currentOnlyTime < $intervalEnd) {
+                $currentHour->addMinutes($intervalMinutes);
+                continue;
+            }
+        }
+
             $currentDateTime = Carbon::parse($specificDate)->setTime($currentHour->hour, $currentHour->minute);
             $color = $this->getTimeColor($currentDateTime, $removedDates,  $now, $selectedAgendamento);
             $availableTimes[] = ['time' => $currentDateTime, 'color' => $color];
-
+               
 
 
             $currentHour->addMinutes($intervalMinutes);
