@@ -191,41 +191,7 @@ if ($assinaturaResponse->failed()) {
 $subscriptionId = $assinaturaResponse->json()['id'];
 
 
-// ===============================
-// 7) ASAAS - BUSCAR PAGAMENTOS GERADOS PELA ASSINATURA
-// ===============================
-$paymentsResponse = Http::withHeaders([
-    'accept' => 'application/json',
-    'access_token' => $asaasToken,
-])->get(env("PIX_BASE_URL") . "payments", [
-    "subscription" => $subscriptionId
-]);
 
-if ($paymentsResponse->failed()) {
-    dd("Erro ao buscar pagamentos da assinatura", $paymentsResponse->json());
-}
-
-$payments = $paymentsResponse->json()['data'];
-
-if (count($payments) === 0) {
-    dd("Nenhum pagamento gerado para a assinatura.");
-}
-
-// Pegamos o primeiro pagamento gerado
-$payment = $payments[0];
-
-if (!isset($payment['invoiceUrl'])) {
-    dd("Pagamento não contém invoiceUrl", $payment);
-}
-
-$invoiceUrl = $payment['invoiceUrl'];
-
-
-// ===============================
-// 8) Salvar informações e REDIRECIONAR PARA O invoiceUrl
-// ===============================
-
-$barbearia_user->asaas_payment_url = $invoiceUrl;
 $barbearia_user->assinatura_id = $subscriptionId;
 $barbearia_user->asaas_customer_id = $clienteId;
 $barbearia_user->save();
@@ -235,7 +201,7 @@ $barbearia_user->save();
 // $barbearia_user->delete();
 
 // REDIRECIONAR PARA O invoiceUrl
-return redirect()->away($invoiceUrl);
+return redirect(env('APP_URL') . "/gerenciar/" . $barbearia->slug. "/billing");
 
     }
 
