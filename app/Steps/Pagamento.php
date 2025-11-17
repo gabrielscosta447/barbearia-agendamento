@@ -173,9 +173,9 @@ $assinaturaResponse = Http::withHeaders([
 ])->post(env("PIX_BASE_URL") . "subscriptions", [
     "customer" => $clienteId,
     "billingType" => "UNDEFINED",
-    "value" => 1,
+    "value" => 5,
     "cycle" => "MONTHLY",
-"nextDueDate" => \Carbon\Carbon::tomorrow()->format('Y-m-d'),
+"nextDueDate" => now()->addDays(90)->format('Y-m-d'),
     "description" => "Assinatura BarberConnect",
     "externalReference" => (string) $barbearia_user->id,
     "callback" =>[
