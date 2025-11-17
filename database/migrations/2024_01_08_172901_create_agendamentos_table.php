@@ -23,7 +23,7 @@ return new class extends Migration
             $table->foreign('maquininha_id')->references('id')->on('maquininhas')->onDelete('cascade');
             $table->string("payment_method")->nullable();
             $table->boolean("pago")->default(0);
-            $table->string("id_pix")->nullable();
+            $table->text("id_pix")->nullable();
             $table->text("qrcode")->nullable();
             $table->text("payload")->nullable();
             $table->dateTime("start_date");
