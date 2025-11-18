@@ -39,16 +39,7 @@ class BancoDoBrasilService
         return $response->json();
     }
 
-    public function obterPix($txid) {
-        $accessToken = $this->authenticate($this->clientId, $this->clientSecret);
-
-        $response = Http::withHeaders([
-             'Authorization' => 'Bearer ' . $accessToken,
-            'Content-Type' => 'application/json',
-        ])->get('https://api.hm.bb.com.br/pix/v2/cob/' . $txid . '?gw-dev-app-key=' . env('BANCO_DO_BRASIL_APP_KEY'));
-
-        return $response->json();
-    }
+  
  
    
  

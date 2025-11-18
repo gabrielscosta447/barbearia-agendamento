@@ -13,11 +13,14 @@ class PagarAgendamento extends Component
     public $qrCodePix;
     public $pixCopiaECola;
     public $copiado = false;
+    public $preco;
     public function mount($id) {
         $this->agendamento = Agendamento::find($id);
   
         $this->qrCodePix = $this->agendamento->id_pix;
         $this->pixCopiaECola = $this->agendamento->payload;
+        $this->preco = $this->agendamento->total_price;
+        
     
     }
    

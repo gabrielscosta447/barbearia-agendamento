@@ -1,4 +1,13 @@
 <div class="max-w-md mx-auto bg-white shadow-lg rounded-2xl p-6 border border-gray-200">
+
+    <h1 class="text-2xl font-bold text-gray-800 mb-4 text-center">Detalhes do Pagamento</h1>
+    @php
+    
+        $preco = $agendamento->total_price * 0.3;
+        $preçoNaBarbearia = $agendamento->total_price - $preco;
+    @endphp
+    <p class="text-gray-600 mb-6 text-center">Total a pagar para o barbeiro para reservar horário: <span class="font-semibold text-lg text-green-600">R$ {{ number_format($preco, 2, ',', '.') }}</span></p>
+    <p class="text-gray-600 mb-6 text-center">Valor restante para pagar ao barbeiro na barbearia: <span class="font-semibold text-lg text-green-600">R$ {{ number_format($preçoNaBarbearia, 2, ',', '.') }}</span></p>
     {{-- QR Code --}}
     <div class="flex flex-col items-center text-center">
         <img 
@@ -48,7 +57,7 @@
 
     {{-- Rodapé opcional --}}
     <p class="text-xs text-gray-400 text-center mt-6">
-        O pagamento será confirmado automaticamente após a compensação.
+      Para reservar horário com o barbeiro , você deve efetuar o pagamento de 30% do valor total do serviço via Pix.O pagamento será confirmado automaticamente após a compensação.
     </p>
 
     <button
