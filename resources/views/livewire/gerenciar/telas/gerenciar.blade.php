@@ -107,7 +107,7 @@
                 <div class="flex flex-row -mx-3">
                   <div class="flex-none w-2/3 max-w-full px-3">
                     <div>
-                      <p class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">Sales</p>
+                      <p class="mb-0 font-sans text-sm font-semibold leading-normal uppercase dark:text-white dark:opacity-60">Total do Mês</p>
                       <h5 class="mb-2 font-bold dark:text-white">R${{ $this->totalMes['total_mes_atual'] }}</h5>
                       <p class="mb-0 dark:text-white dark:opacity-60">
                         @if( $this->totalMes['diferenca'] < 0)
@@ -139,7 +139,7 @@
                 <h6 class="capitalize dark:text-white">Quantidade de Agendamentos</h6>
                 <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
                   <i class="fa fa-arrow-up text-emerald-500"></i>
-                  <span class="font-semibold">4% more</span> in 2021
+            
                 </p>
               </div>
               <div class="flex-auto p-4">
@@ -156,7 +156,7 @@
                 <h6 class="capitalize dark:text-white">Vendas</h6>
                 <p class="mb-0 text-sm leading-normal dark:text-white dark:opacity-60">
                   <i class="fa fa-arrow-up text-emerald-500"></i>
-                  <span class="font-semibold">4% more</span> in 2021
+            
                 </p>
               </div>
               <div class="flex-auto p-4">

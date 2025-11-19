@@ -65,32 +65,47 @@ class Gerenciar extends Component
         return $porcentagemAumento;
     }
     
-    #[Computed]
-    public function usersLastQuarterComparison()
-    {
-        $dataAtualInicio = Carbon::now()->startOfQuarter();
-        $dataAtualFim = Carbon::now();
-        $dataPassadaInicio = $dataAtualInicio->copy()->subQuarter();
-        $dataPassadaFim = $dataAtualFim->copy()->subQuarter();
-        $usuariosUltimoTrimestreAtual = 0;
-        $usuariosTrimestrePassado= 0;
-        foreach( $this->barbearia->barbeiros as $barbeiro){
-            $usuariosUltimoTrimestreAtual +=  $barbeiro->agendamentos()->onlyTrashed()->whereDate("deleted_at", "<=",$dataAtualFim)->whereDate("deleted_at", ">=",$dataAtualInicio)->count() ;
-        };
-        foreach( $this->barbearia->barbeiros as $barbeiro){
-            $usuariosTrimestrePassado +=  $barbeiro->agendamentos()->onlyTrashed()->whereDate("deleted_at", "<=",$dataPassadaInicio)->whereDate("deleted_at", ">=",$dataPassadaFim)->count() ; 
-        };
-       
-       
-    
-        $diferenca = $usuariosUltimoTrimestreAtual - $usuariosTrimestrePassado;
-        $porcentagemAumento = ($usuariosTrimestrePassado != 0) ? ($diferenca / $usuariosTrimestrePassado) * 100 : 0;
-    
-        return [
-            'usuarios_ultimo_trimestre_atual' => $usuariosUltimoTrimestreAtual,
-            'porcentagem_aumento' => $porcentagemAumento
-        ];
+   #[Computed]
+public function usersLastQuarterComparison()
+{
+    $dataAtualInicio = Carbon::now()->startOfQuarter();
+    $dataAtualFim = Carbon::now();
+
+    $dataPassadaInicio = $dataAtualInicio->copy()->subQuarter();
+    $dataPassadaFim = $dataAtualFim->copy()->subQuarter();
+
+    $clientesAtual = 0;
+    $clientesPassado = 0;
+
+    foreach ($this->barbearia->barbeiros as $barbeiro) {
+
+        // Clientes únicos do trimestre atual
+        $clientesAtual += $barbeiro->agendamentos()
+            ->onlyTrashed()
+            ->whereBetween("deleted_at", [$dataAtualInicio, $dataAtualFim])
+            ->distinct("owner_id")
+            ->count("owner_id");
+
+        // Clientes únicos do trimestre passado
+        $clientesPassado += $barbeiro->agendamentos()
+            ->onlyTrashed()
+            ->whereBetween("deleted_at", [$dataPassadaInicio, $dataPassadaFim])
+            ->distinct("owner_id")
+            ->count("owner_id");
     }
+
+    $diferenca = $clientesAtual - $clientesPassado;
+
+    $porcentagemAumento = ($clientesPassado != 0)
+        ? ($diferenca / $clientesPassado) * 100
+        : 0;
+
+    return [
+        'usuarios_ultimo_trimestre_atual' => $clientesAtual,
+        'porcentagem_aumento' => $porcentagemAumento
+    ];
+}
+
     
     private function getTotalFaturaPrice($inicio, $fim)
     {

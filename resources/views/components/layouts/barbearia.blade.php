@@ -54,11 +54,18 @@
     <aside class="fixed inset-y-0 flex-wrap items-center justify-between block w-full p-0 my-4 overflow-y-auto antialiased transition-transform duration-200 -translate-x-full bg-white border-0 shadow-xl dark:shadow-none dark:bg-slate-850 max-w-64 ease-nav-brand z-990 xl:ml-6 rounded-2xl xl:left-0 xl:translate-x-0" aria-expanded="false">
       <div class="h-19">
         <i class="absolute top-0 right-0 p-4 opacity-50 cursor-pointer fas fa-times dark:text-white text-slate-400 xl:hidden" sidenav-close></i>
-        <a class="block px-8 py-6 m-0 text-sm whitespace-nowrap dark:text-white text-slate-700" href="http://localhost:8000" target="_blank">
-          <img     src="/storage/{{ $barbearia->imagem }}" class="inline h-full max-w-full transition-all duration-200 rounded-lg ease-nav-brand max-h-8" alt="main_logo" />
+       <a class="block px-8 py-6 m-0 text-sm whitespace-nowrap dark:text-white text-slate-700"
+   href="{{ config('app.url') . '/' . $barbearia->slug }}" 
+   target="_blank">
 
-          <span class="ml-1 font-semibold transition-all duration-200 ease-nav-brand">{{  $barbearia->nome }}</span>
-        </a>
+    <img src="/storage/{{ $barbearia->imagem }}"
+         class="inline h-full max-w-full transition-all duration-200 rounded-lg ease-nav-brand max-h-8"
+         alt="main_logo" />
+
+    <span class="ml-1 font-semibold transition-all duration-200 ease-nav-brand">
+        {{ $barbearia->nome }}
+    </span>
+</a>
       </div>
 
       <hr class="h-px mt-0 bg-transparent bg-gradient-to-r from-transparent via-black/40 to-transparent dark:bg-gradient-to-r dark:from-transparent dark:via-white dark:to-transparent" />
@@ -84,7 +91,7 @@
           </li>
 
           <li class="mt-0.5 w-full">
-            <x-barbearia-link route="/gerenciar/{{ $barbearia->slug }}/horarios" name="Horários" :active="request()->routeIs('horarios')" icon="fas fa-clock"/>
+            <x-barbearia-link route="/gerenciar/{{ $barbearia->slug }}/horarios" name="Horários" :active="request()->routeIs('horarios')"   icon="ni ni-time-alarm"/>
           </li>
 
           <li class="mt-0.5 w-full">
