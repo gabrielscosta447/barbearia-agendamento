@@ -1,18 +1,4 @@
-<!--
 
-=========================================================
-* Argon Dashboard 2 Tailwind - v1.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-tailwind
-* Copyright 2022 Creative Tim (https://www.creative-tim.com)
-
-* Coded by www.creative-tim.com
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
--->
 <!DOCTYPE html>
 <html>
   <head>
@@ -134,7 +120,7 @@
         <div class="flex items-center justify-between w-full px-4 py-1 mx-auto flex-wrap-inherit">
           <nav>
           
-            <h6 class="mb-0 font-bold text-white capitalize">Dashboard</h6>
+       
           </nav>
 
           <div class="flex items-center mt-2 grow sm:mt-0 sm:mr-6 md:mr-0 lg:flex lg:basis-auto">
