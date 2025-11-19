@@ -74,7 +74,7 @@ class Clientes extends Component
 #[On('refrigerar')]
 public function agendamentosFiltrados()
 {
-    return $this->barbearia->clientes->where("id", $this->clienteSelecionado)->first()?->agendamentos()->withTrashed()->paginate(10);
+    return $this->barbearia->clientes->where("id", $this->clienteSelecionado)->first()?->agendamentos()->where("pago",1)->withTrashed()->paginate(10);
 }
 
 
@@ -101,11 +101,14 @@ public function agendamentosFiltrados()
     $agendamento = Agendamento::withTrashed()->find($agendamento->id);
 
     $firebaseToken = $agendamento->owner?->token;
-    $pvKeyPath = env('FIREBASE_CREDENTIALS_JSON');
-    $credential = new ServiceAccountCredentials(
-       "https://www.googleapis.com/auth/firebase.messaging",
-       json_decode(env('FIREBASE_CREDENTIALS_JSON'), true)
-   );
+   $path = base_path(env('FIREBASE_CREDENTIALS'));
+
+$credentialData = json_decode(file_get_contents($path), true);
+
+$credential = new ServiceAccountCredentials(
+    "https://www.googleapis.com/auth/firebase.messaging",
+    $credentialData
+);
 
    $token = $credential->fetchAuthToken(HttpHandlerFactory::build());
 

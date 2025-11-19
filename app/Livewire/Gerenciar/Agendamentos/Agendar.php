@@ -152,11 +152,15 @@ $credential = new ServiceAccountCredentials(
 
 
     if ($agendamento->payment_method == 'Cartão de Crédito' && isset($agendamento->maquininha->taxa_credito)) {
+   
         $agendamento->fatura_price = $agendamento->total_price - ($agendamento->maquininha->taxa_credito/100 * $agendamento->total_price);
 
     } elseif($agendamento->payment_method == 'Cartão de Débito' && isset($agendamento->maquininha->taxa_debito)) {
+   
         $agendamento->fatura_price = $agendamento->total_price - ($agendamento->maquininha->taxa_debito/100 * $agendamento->total_price);
     } else {
+
+
        $agendamento->fatura_price = $agendamento->total_price;
     }
 

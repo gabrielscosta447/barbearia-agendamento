@@ -192,19 +192,18 @@ if (document.querySelector("#chart-sales")) {
 
     // Loop de janeiro a dezembro
      
-    for (var mes = 0; mes < 12; mes++) {
-        var total = 0;
-        var agendamentos= agendamentosPorMes[mes]|| [];
-       console.log(agendamentos)
-         agendamentos.forEach(agendamento => {
-            total += agendamento.fatura_price
-        });
-       
+for (let mes = 0; mes < 12; mes++) {
 
-         
-      
-        dadosAgendamentos.push(total);
-    }
+    let agendamentos = agendamentosPorMes[mes] || [];
+    
+    let total = agendamentos.reduce((soma, agendamento) => {
+        return soma + Number(agendamento.fatura_price || 0);
+    }, 0);
+
+   
+
+    dadosAgendamentos.push(total);
+}
 
     var ctx1 = document.getElementById("chart-sales").getContext("2d");
     var gradientStroke1 = ctx1.createLinearGradient(0, 230, 0, 50);

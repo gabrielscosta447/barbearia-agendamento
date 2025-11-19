@@ -207,22 +207,50 @@
 
     <div class="flex flex-wrap justify-between items-center gap-2 mt-4">
 
-        <button wire:click="selectedAgendamento({{ $agendamento->id }})"
-            class="px-3 py-1 bg-blue-500 text-white text-xs rounded-lg font-bold uppercase">
-            Editar
-        </button>
+       
+     @if($agendamento->deleted_at)
+    <button
+        wire:click="cancelar({{ $agendamento->id }})"
+        wire:loading.attr="disabled"
+        wire:target="cancelar({{ $agendamento->id }})"
+        class="px-3 py-1 bg-red-500 text-white text-xs rounded-lg font-bold uppercase flex items-center justify-center gap-2 disabled:opacity-60"
+        aria-live="polite"
+    >
+        <!-- Spinner exibido só enquanto a ação 'cancelar(id)' está em andamento -->
+        <span wire:loading wire:target="cancelar({{ $agendamento->id }})" class="flex items-center gap-2">
+            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            Cancelando...
+        </span>
 
-        @if($agendamento->deleted_at)
-        <button wire:click="cancelar({{ $agendamento->id }})"
-            class="px-3 py-1 bg-red-500 text-white text-xs rounded-lg font-bold uppercase">
+        <!-- Texto normal quando não está carregando -->
+        <span wire:loading.remove wire:target="cancelar({{ $agendamento->id }})">
             Cancelar
-        </button>
-        @else
-        <button wire:click="concluir({{ $agendamento->id }})"
-            class="px-3 py-1 bg-emerald-500 text-white text-xs rounded-lg font-bold uppercase">
+        </span>
+    </button>
+@else
+    <button
+        wire:click="concluir({{ $agendamento->id }})"
+        wire:loading.attr="disabled"
+        wire:target="concluir({{ $agendamento->id }})"
+        class="px-3 py-1 bg-emerald-500 text-white text-xs rounded-lg font-bold uppercase flex items-center justify-center gap-2 disabled:opacity-60"
+        aria-live="polite"
+    >
+        <span wire:loading wire:target="concluir({{ $agendamento->id }})" class="flex items-center gap-2">
+            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            Processando...
+        </span>
+
+        <span wire:loading.remove wire:target="concluir({{ $agendamento->id }})">
             Concluir
-        </button>
-        @endif
+        </span>
+    </button>
+@endif
 
         <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '',55 . $agendamento->owner->phone) }}"
            target="_blank" class="text-blue-500 text-sm underline">
