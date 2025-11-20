@@ -178,8 +178,10 @@ public function getAllAvailableTimes($specificDate, $selectedAgendamento = null)
 $agendamentosFiltrados = $this->agendamentos->filter(function ($agendamento) use ($formatadoData) {
     return 
         Carbon::parse($agendamento->start_date)->format('Y-m-d') === $formatadoData
-        && $agendamento->created_at >= now()->subMinutes(1); 
+        && $agendamento->created_at >= now()->subMinutes(1)
+        && $agendamento->pago === 1;
 });
+
 
 
 
@@ -299,7 +301,10 @@ $agendamentosFiltrados = $this->agendamentos->filter(function ($agendamento) use
          return 'red';
      }
 
-     foreach ($this->agendamentos->filter(fn ($a) => $a->created_at >= now()->subMinutes(1)) as $horarioAgendado) {
+     foreach ($this->agendamentos->filter(fn ($e) =>
+        $e->created_at > now()->subHour()   // pagamento NÃO expirou
+        && $e->pago == 1                // ainda não foi pago
+    ) as $horarioAgendado) {
          $startHorarioAgendado = Carbon::parse($horarioAgendado->start_date);
          $endHorarioAgendado = Carbon::parse($horarioAgendado->end_date);
 
@@ -328,7 +333,10 @@ $agendamentosFiltrados = $this->agendamentos->filter(function ($agendamento) use
  public function isTimeScheduled($currentDateTime, $selectedAgendamento = null)
 {
 
-    foreach ($this->agendamentos->filter(fn ($a) => $a->created_at >= now()->subMinutes(1)) as $horarioAgendado) {
+    foreach ($this->agendamentos->filter(fn ($e) =>
+        $e->created_at > now()->subHour()   // pagamento NÃO expirou
+        && $e->pago == 1                 // ainda não foi pago
+    ) as $horarioAgendado) {
         $startHorarioAgendado = Carbon::parse($horarioAgendado->start_date)->format('Y-m-d H:i:s');
 
 
