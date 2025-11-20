@@ -21,7 +21,7 @@ class BancoDoBrasilService
      
 
         $chavePix = "42cc282f-bc71-43b6-b00f-9b29361afb54";
-        //data formatada correta para o banco do brasil
+        //data formatada correta 
         $formData = [
             "addressKey" => $chavePix,
             "value" => number_format($valor, 2, '.', ''),
