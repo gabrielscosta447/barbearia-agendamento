@@ -133,6 +133,8 @@ public function webhookASAAS(Request $request)
             return response()->json(['error' => 'BarbeariaUser not found'], 404);
         }
 
+
+
    
 
         // 🔵 Assinatura paga
@@ -153,9 +155,14 @@ public function webhookASAAS(Request $request)
     return response()->json(['success' => true]);
 }
 
+     
+
         // 🔴 Assinatura VENCIDA ou CANCELADA
         if ($status === "OVERDUE" || $status === "CANCELLED") {
- $token = env('PIX_ACCESS_TOKEN');
+
+
+
+        $token = env('PIX_ACCESS_TOKEN');
         $baseUrl = env('PIX_BASE_URL');
 
  
@@ -227,7 +234,7 @@ public function webhookASAAS(Request $request)
 
     // 🟡 pagamento vencido/cancelado
     if ($status === 'OVERDUE' || $status === 'CANCELLED') {
-        $agendamento->delete();
+        $agendamento->forceDelete();
         Log::info("Agendamento cancelado/vencido apagado");
         return response()->json(['deleted' => true]);
     }
