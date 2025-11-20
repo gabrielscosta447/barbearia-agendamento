@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Carbon\Carbon;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Agendamento extends Model
@@ -43,7 +46,17 @@ class Agendamento extends Model
         return $this->belongsTo(Maquininha::class, "maquininha_id");
     }
 
-
+   protected function pagamentoExpirado(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                // Exemplo: pagamento expira 1 hora após o created_at
+                return Carbon::now()->greaterThan(
+                    $this->created_at->addHour()
+                );
+            }
+        );
+    }
 
 
 

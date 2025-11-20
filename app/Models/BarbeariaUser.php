@@ -175,11 +175,11 @@ public function getAllAvailableTimes($specificDate, $selectedAgendamento = null)
     }
 
     $formatadoData = $specificDateFormatted->format('Y-m-d');
-    $agendamentosFiltrados = $this->agendamentos->filter(function ($agendamento) use ($formatadoData) {
-
-        return Carbon::parse($agendamento->start_date)->format('Y-m-d') === $formatadoData;
-    });
-
+$agendamentosFiltrados = $this->agendamentos->filter(function ($agendamento) use ($formatadoData) {
+    return 
+        Carbon::parse($agendamento->start_date)->format('Y-m-d') === $formatadoData
+        && $agendamento->created_at >= now()->subMinutes(1); 
+});
 
 
 
@@ -299,7 +299,7 @@ public function getAllAvailableTimes($specificDate, $selectedAgendamento = null)
          return 'red';
      }
 
-     foreach ($this->agendamentos as $horarioAgendado) {
+     foreach ($this->agendamentos->filter(fn ($a) => $a->created_at >= now()->subMinutes(1)) as $horarioAgendado) {
          $startHorarioAgendado = Carbon::parse($horarioAgendado->start_date);
          $endHorarioAgendado = Carbon::parse($horarioAgendado->end_date);
 
@@ -328,7 +328,7 @@ public function getAllAvailableTimes($specificDate, $selectedAgendamento = null)
  public function isTimeScheduled($currentDateTime, $selectedAgendamento = null)
 {
 
-    foreach ($this->agendamentos as $horarioAgendado) {
+    foreach ($this->agendamentos->filter(fn ($a) => $a->created_at >= now()->subMinutes(1)) as $horarioAgendado) {
         $startHorarioAgendado = Carbon::parse($horarioAgendado->start_date)->format('Y-m-d H:i:s');
 
 
