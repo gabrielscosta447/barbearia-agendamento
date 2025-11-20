@@ -25,7 +25,7 @@ class BancoDoBrasilService
         $formData = [
             "addressKey" => $chavePix,
             "value" => number_format($valor, 2, '.', ''),
-            "expirationDate" => date('Y-m-d\TH:i:s\Z', strtotime('+1 hour')),
+            "expirationDate" => date('Y-m-d H:i:s', strtotime('+1 hour')),
             "externalReference" => $agendamentoId
         ];
 
