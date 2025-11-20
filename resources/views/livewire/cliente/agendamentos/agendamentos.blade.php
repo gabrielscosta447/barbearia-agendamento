@@ -128,26 +128,47 @@
                 />
               </div>
 
-              @if(!$agendamento->trashed())
-                @if($option !== 'pendente')
-                  <x-button
-                    class="rounded bg-black px-7 pb-2.5 pt-3 text-sm font-medium uppercase text-white"
-                    wire:click="abrirModal({{ $agendamento->id }})"
-                  >
-                    <span wire:loading.remove wire:target="abrirModal({{ $agendamento->id }})">Editar</span>
-                    <span wire:loading wire:target="abrirModal({{ $agendamento->id }})">Carregando...</span>
-                  </x-button>
-                @else
-                  <x-button
-                    class="rounded bg-black px-7 pb-2.5 pt-3 text-sm font-medium uppercase text-white"
-                    wire:navigate.hover
-                   href="/pagar/{{ $agendamento->id }}"
-                  >
-                    <span >Pagar</span>
-                   
-                  </x-button>
-                @endif
-              @endif
+           @if(!$agendamento->trashed())
+
+    @if($option !== 'pendente')
+
+        <x-button
+            class="rounded bg-black px-7 pb-2.5 pt-3 text-sm font-medium uppercase text-white"
+            wire:click="abrirModal({{ $agendamento->id }})"
+        >
+            <span wire:loading.remove wire:target="abrirModal({{ $agendamento->id }})">
+                Editar
+            </span>
+            <span wire:loading wire:target="abrirModal({{ $agendamento->id }})">
+                Carregando...
+            </span>
+        </x-button>
+
+    @else
+
+        {{-- BOTÃO PAGAR PRETO (não pago + válido) --}}
+        @if($agendamento->pago == 0 && $agendamento->created_at->gt(now()->subHour()))
+            <x-button
+                class="rounded bg-black px-7 pb-2.5 pt-3 text-sm font-medium uppercase text-white"
+                wire:navigate.hover
+                href="/pagar/{{ $agendamento->id }}"
+            >
+                <span>Pagar</span>
+            </x-button>
+
+        {{-- BOTÃO PAGAR VERMELHO (pago ou expirado) --}}
+        @else
+         <x-button
+    class="rounded bg-red-500 px-7 pb-2.5 pt-3 text-sm font-medium uppercase text-white opacity-50 cursor-not-allowed"
+    disabled
+>
+    <span>Expirado</span>
+</x-button>
+        @endif
+
+    @endif
+
+@endif
             </div>
           </div>
         @endforeach
