@@ -176,12 +176,18 @@ public function getAllAvailableTimes($specificDate, $selectedAgendamento = null)
 
     $formatadoData = $specificDateFormatted->format('Y-m-d');
 $agendamentosFiltrados = $this->agendamentos->filter(function ($agendamento) use ($formatadoData) {
-    return 
-        Carbon::parse($agendamento->start_date)->format('Y-m-d') === $formatadoData
-        && $agendamento->created_at >= now()->subMinutes(1)
-        && $agendamento->pago === 1;
-});
 
+    $dataIgual = Carbon::parse($agendamento->start_date)->format('Y-m-d') === $formatadoData;
+
+    $naoExpirado = $agendamento->created_at > now()->subHour();
+
+    return 
+        $dataIgual
+        && (
+            $agendamento->pago == 1           // pago (expirado ou não)
+            || ($agendamento->pago == 0 && $naoExpirado) // não pago mas ainda válido
+        );
+});
 
 
 
@@ -302,8 +308,8 @@ $agendamentosFiltrados = $this->agendamentos->filter(function ($agendamento) use
      }
 
      foreach ($this->agendamentos->filter(fn ($e) =>
-        $e->created_at > now()->subHour()   // pagamento NÃO expirou
-        && $e->pago == 1                // ainda não foi pago
+         $e->pago == 1 
+    || ($e->pago == 0 && $e->created_at > now()->subHour())               // ainda não foi pago
     ) as $horarioAgendado) {
          $startHorarioAgendado = Carbon::parse($horarioAgendado->start_date);
          $endHorarioAgendado = Carbon::parse($horarioAgendado->end_date);
@@ -334,8 +340,8 @@ $agendamentosFiltrados = $this->agendamentos->filter(function ($agendamento) use
 {
 
     foreach ($this->agendamentos->filter(fn ($e) =>
-        $e->created_at > now()->subHour()   // pagamento NÃO expirou
-        && $e->pago == 1                 // ainda não foi pago
+         $e->pago == 1 
+    || ($e->pago == 0 && $e->created_at > now()->subHour())              // ainda não foi pago
     ) as $horarioAgendado) {
         $startHorarioAgendado = Carbon::parse($horarioAgendado->start_date)->format('Y-m-d H:i:s');
 

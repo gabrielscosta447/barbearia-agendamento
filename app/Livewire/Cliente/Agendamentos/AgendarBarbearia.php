@@ -117,8 +117,13 @@ class AgendarBarbearia extends Component
      $this->validate();
 $existingAgendamentoBarbearia = Agendamento::where('barbearia_user_id', $this->barbeiroSelecionado->id)
     ->where('start_date', Carbon::createFromFormat('d-m-Y H:i', $this->date))
-    ->where('created_at', '>', now()->subHour()) // pagamento não expirado
-    ->where("pago", 1) // ainda não foi pago
+    ->where(function ($q) {
+        $q->where('pago', 1) // pago (expirado ou não)
+          ->orWhere(function ($q2) {
+              $q2->where('pago', 0) // não pago
+                 ->where('created_at', '>', now()->subHour()); // ainda NÃO expirado
+          });
+    })
     ->first();
 
 
@@ -164,9 +169,9 @@ $existingAgendamentoBarbearia = Agendamento::where('barbearia_user_id', $this->b
 
 
 foreach ($eventosAgendados->filter(fn ($e) =>
-        $e->created_at > now()->subHour()   // pagamento NÃO expirou
-        && $e->pago == 1                  // ainda não foi pago
-    ) as $appointment) {
+    $e->pago == 1 
+    || ($e->pago == 0 && $e->created_at > now()->subHour())
+) as $appointment) {
 
 
          $existingStartTime = Carbon::parse($appointment->start_date);
