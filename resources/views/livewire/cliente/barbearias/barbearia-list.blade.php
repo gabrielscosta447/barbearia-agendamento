@@ -375,44 +375,56 @@ fill="none"
 </div>
 
   </div>
-  @script
+@script
 <script>
 document.addEventListener('livewire:navigated', function () {
-      console.log("📍 Script Livewire carregado!");
+    console.log("📍 Script Livewire carregado!");
+
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             function (position) {
-            const component = window.Livewire.find(@this.id); // @this.id pega o id do componente atual
+                const component = window.Livewire.find(@this.id);
+
                 if(component) {
-                      component.dispatch('setLocation',{ lat: position.coords.latitude, lng: position.coords.longitude });
-                    console.log("📍 Localização enviada:", position.coords.latitude, position.coords.longitude);
+                    component.dispatch('setLocation', {
+                        lat: position.coords.latitude, 
+                        lng: position.coords.longitude
+                    });
+
+                    console.log("✅ Localização enviada:", {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
                 } else {
                     console.error("❌ Componente Livewire não encontrado");
                 }
-
             },
             function (error) {
                 switch(error.code) {
                     case error.PERMISSION_DENIED:
-                        alert("Você negou o acesso à sua localização.");
+                        console.warn("⚠️ Usuário negou acesso à localização.");
                         break;
+
                     case error.POSITION_UNAVAILABLE:
-                        alert("Informações de localização indisponíveis.");
+                        console.error("❌ Informações de localização indisponíveis.");
                         break;
+
                     case error.TIMEOUT:
-                        alert("Tempo limite para obter localização expirou.");
+                        console.warn("⏱️ Tempo limite para obter localização expirou.");
                         break;
+
                     default:
-                        alert("Ocorreu um erro desconhecido ao obter sua localização.");
+                        console.error("🚨 Erro desconhecido ao obter localização.");
                         break;
                 }
             }
         );
     } else {
-        alert("Seu navegador não suporta geolocalização.");
+        console.error("❌ Navegador não suporta geolocalização.");
     }
 });
 </script>
 @endscript
+
 
 </div>

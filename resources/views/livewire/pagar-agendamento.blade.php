@@ -91,6 +91,10 @@
             >
 
             <h2 class="text-lg font-semibold text-gray-800 mb-2">Pagamento via Pix</h2>
+            <div class="text-center mb-4" wire:ignore>
+    <p class="text-gray-600">O pagamento expira em:</p>
+    <span id="timer" class="text-xl font-bold text-red-600">--:--</span>
+</div>
             <p class="text-gray-500 text-sm">Escaneie o QR Code abaixo ou copie o código Pix.</p>
         </div>
 
@@ -134,13 +138,26 @@
             O pagamento será confirmado automaticamente após a compensação.
         </p>
 
-        <button
-            type="button"
-            wire:click="voltar"
-            class="mt-4 rounded bg-gray-200 px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-black hover:bg-gray-300"
-        >
-            VOLTAR
-        </button>
+     <button
+    type="button"
+    wire:click="voltar"
+    class="mt-4 rounded bg-gray-200 px-7 pb-2.5 pt-3 text-sm font-medium uppercase leading-normal text-black hover:bg-gray-300 flex items-center justify-center gap-2"
+>
+    <span wire:loading.remove wire:target="voltar">
+        VOLTAR
+    </span>
+
+    <span wire:loading wire:target="voltar" class="flex items-center gap-2">
+        <svg class="animate-spin h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none"
+             viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10"
+                    stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
+        Carregando...
+    </span>
+</button>
 
     @endif
 </div>
@@ -169,5 +186,26 @@ document.addEventListener('livewire:navigated', () => {
             console.error('Erro ao copiar Pix:', err);
         }
     });
+     const expirationTime = @js($expiraEm); // timestamp enviado pelo Livewire
+    const timerEl = document.getElementById('timer');
+
+    function atualizarTimer() {
+        const agora = new Date().getTime();
+        const diff = expirationTime - agora;
+
+        if (diff <= 0) {
+            timerEl.innerText = "00:00";
+        
+            return;
+        }
+
+        const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const segundos = Math.floor((diff % (1000 * 60)) / 1000);
+
+        timerEl.innerText =
+            String(minutos).padStart(2, '0') + ":" + String(segundos).padStart(2, '0');
+    }
+
+    setInterval(atualizarTimer, 1000);
 });
 </script>
