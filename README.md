@@ -17,7 +17,7 @@ Com ele, clientes podem agendar horários facilmente e barbeiros conseguem organ
 🛠️ Tecnologias Utilizadas
 PHP com Laravel
 MySQL ou PostgreSQL
-Blade / Vue / Inertia (dependendo do seu projeto)
+Blade / Livewire
 TailwindCSS
 JavaScript / TypeScript
 ⚙️ Instalação
