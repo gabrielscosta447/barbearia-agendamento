@@ -25,10 +25,10 @@ JavaScript / TypeScript
 Siga os passos abaixo para rodar o projeto localmente:
 
 # Clonar o repositório
-git clone https://github.com/seu-usuario/barberhub.git
+git clone https://github.com/gabrielscosta447/barbearia-agendamento.git
 
 # Acessar a pasta
-cd barberhub
+cd barbearia-agendamento
 
 # Instalar dependências
 composer install
