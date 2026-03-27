@@ -54,9 +54,10 @@ Configure seu arquivo .env com as informações do banco de dados:
 DB_DATABASE=barberhub
 DB_USERNAME=root
 DB_PASSWORD=
-📸 Preview
+## 📸 Preview
+![Agendamento](./assets/barbearia-preview.png)
 
-(adicione prints do sistema aqui depois)
+
 
 🎯 Objetivo
 
