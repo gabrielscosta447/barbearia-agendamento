@@ -1,5 +1,7 @@
-💈 BarberHub — Sistema de Agendamento para Barbearias
-<p align="center"> <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png" width="120" alt="BarberHub Logo"> </p> <p align="center"> Sistema completo para gerenciamento de barbearias, permitindo agendamentos online, controle de clientes e organização de serviços. </p>
+💈 BarberConnect — Sistema de Agendamento para Barbearias
+<p align="center">
+  <img src="https://cdn-icons-png.flaticon.com/512/3063/3063828.png" width="120" alt="BarberHub Logo">
+</p>
 🚀 Sobre o Projeto
 
 O BarberHub é uma aplicação web desenvolvida para facilitar o dia a dia de barbearias, substituindo agendas físicas por um sistema digital moderno.
@@ -19,7 +21,7 @@ PHP com Laravel
 MySQL ou PostgreSQL
 Blade / Livewire
 TailwindCSS
-JavaScript / TypeScript
+JavaScript
 ⚙️ Instalação
 
 Siga os passos abaixo para rodar o projeto localmente:
