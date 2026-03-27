@@ -1,66 +1,90 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+💈 BarberHub — Sistema de Agendamento para Barbearias
+<p align="center"> <img src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png" width="120" alt="BarberHub Logo"> </p> <p align="center"> Sistema completo para gerenciamento de barbearias, permitindo agendamentos online, controle de clientes e organização de serviços. </p>
+🚀 Sobre o Projeto
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+O BarberHub é uma aplicação web desenvolvida para facilitar o dia a dia de barbearias, substituindo agendas físicas por um sistema digital moderno.
 
-## About Laravel
+Com ele, clientes podem agendar horários facilmente e barbeiros conseguem organizar sua rotina de forma eficiente.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+✂️ Funcionalidades
+📅 Agendamento online de horários
+👤 Cadastro de clientes
+💈 Gestão de barbeiros
+🧾 Controle de serviços (corte, barba, etc.)
+⏰ Controle de horários disponíveis
+📊 Painel administrativo
+🔔 (Opcional) Notificações de agendamento
+🛠️ Tecnologias Utilizadas
+PHP com Laravel
+MySQL ou PostgreSQL
+Blade / Vue / Inertia (dependendo do seu projeto)
+TailwindCSS
+JavaScript / TypeScript
+⚙️ Instalação
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Siga os passos abaixo para rodar o projeto localmente:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+# Clonar o repositório
+git clone https://github.com/seu-usuario/barberhub.git
 
-## Learning Laravel
+# Acessar a pasta
+cd barberhub
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+# Instalar dependências
+composer install
+npm install
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+# Copiar o .env
+cp .env.example .env
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# Gerar chave da aplicação
+php artisan key:generate
 
-## Laravel Sponsors
+# Rodar migrations
+php artisan migrate
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Iniciar servidor
+php artisan serve
+🔑 Configuração
 
-### Premium Partners
+Configure seu arquivo .env com as informações do banco de dados:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+DB_DATABASE=barberhub
+DB_USERNAME=root
+DB_PASSWORD=
+📸 Preview
 
-## Contributing
+(adicione prints do sistema aqui depois)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+🎯 Objetivo
 
-## Code of Conduct
+Este projeto tem como objetivo:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Melhorar a organização de barbearias
+Reduzir faltas de clientes
+Automatizar agendamentos
+Oferecer uma experiência moderna para clientes
+📌 Futuras Melhorias
+💳 Integração com pagamentos online
+📱 Versão mobile (app)
+📲 Integração com WhatsApp
+⭐ Sistema de avaliações
+🤝 Contribuição
 
-## Security Vulnerabilities
+Sinta-se à vontade para contribuir com o projeto:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Criar uma branch
+git checkout -b minha-feature
 
-## License
+# Commit
+git commit -m "Minha nova feature"
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# Push
+git push origin minha-feature
+📄 Licença
+
+Este projeto está sob a licença MIT.
+
+👨‍💻 Autor
+
+Desenvolvido por Gabriel 🚀
