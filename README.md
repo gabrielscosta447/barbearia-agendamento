@@ -1,6 +1,6 @@
 💈 BarberConnect — Sistema de Agendamento para Barbearias
 <p align="center">
-  <img src="https://cdn-icons-png.flaticon.com/512/3063/3063828.png" width="120" alt="BarberHub Logo">
+  <img src="https://cdn-icons-png.flaticon.com/512/921/921071.png" width="120" alt="BarberHub Logo">
 </p>
 🚀 Sobre o Projeto
 
